@@ -1,0 +1,65 @@
+AC_INIT([iphuc], [0.5.0])
+AM_INIT_AUTOMAKE([iphuc], [0.5.0])
+AC_DEFINE([AUTHOR_NICK_STRING],["nightwatch geohot ixtli warren nall mjc operator"],[Authors that have worked on this app])
+
+AM_CONFIG_HEADER([config.h])
+
+dnl --with-readline or without
+AC_ARG_WITH(readline, AC_HELP_STRING([--with-readline], [use readline for read input (default=yes)]),,with_readline=yes)
+if test "$with_readline" != no; then
+  AC_DEFINE(WITH_READLINE, 1, [Define to 1 to enable use of gnu libreadline for input])
+fi
+if test -n "$with_readline" && test "$with_readline" != yes; then
+  CPPFLAGS="$CPPFLAGS -I${with_readline}/include"
+  LDFLAGS="$LDFLAGS -L${with_readline}/lib"
+fi
+
+
+
+AC_LANG(C++)
+
+AC_PROG_CXX
+AC_PROG_INSTALL
+
+AC_HEADER_STDC
+AC_CHECK_HEADERS([CoreFoundation.h CoreFoundation/CoreFoundation.h],[break])
+
+AC_C_CONST
+AC_FUNC_MALLOC
+
+if test -n "$with_readline" && test "$with_readline" != no; then
+dnl readline usually needs libncurses, but on some systems (like netbsd) libcurses will do. so pick one and use it
+AC_CHECK_LIB(ncurses, initscr, [], AC_CHECK_LIB(curses, initscr)) 
+AC_MSG_CHECKING([if libreadline needs libncurses])
+AC_LINK_IFELSE(
+  [AC_LANG_PROGRAM(
+    [[
+#include <stdio.h>
+#include <readline/readline.h>
+    ]],[[
+  char*x=readline("test"); 
+  return (x?0:1);
+    ]]
+  )],
+  [AC_MSG_RESULT(no)
+    dnl maybe it needs libcurses
+    AC_LINK_IFELSE(
+      [AC_LANG_PROGRAM(
+        [[
+#include <stdio.h>
+#include <readline/readline.h>
+        ]],[[
+      char*x=readline("test");
+      return (x?0:1);
+        ]]
+      )],
+      [AC_MSG_RESULT(no)],
+      [CPPFLAGS="$CPPFLAGS -lcurses"
+       AC_MSG_RESULT(yes)])],
+   [CPPFLAGS="$CPPFLAGS -lncurses"
+   AC_MSG_RESULT(yes)])
+   AC_CHECK_LIB(readline, readline)
+   AC_CHECK_LIB(readline, rl_completion_matches, [AC_DEFINE([HAVE_READLINE_COMPLETION],[1],[Do we have readline's completion functions?])])
+fi
+
+AC_OUTPUT(Makefile)

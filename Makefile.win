@@ -1,0 +1,26 @@
+BIN  = iphuc.exe
+OBJS  = main.o NormalInterface.o Shell.o
+CFLAGS = -Wall -g3 -DCF_BUILDING_CF_AS_LIB -I"C:/Program Files/QuickTime SDK/CIncludes" -I. -I/include
+CXXFLAGS = $(CFLAGS)
+LDFLAGS = -L/lib -L"C:/Program Files/QuickTime SDK/Libraries" -lQTMLClient -lversion iTunesMobileDevice.dll -lreadline
+RM = rm -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: $(BIN) all-after
+
+
+clean: clean-custom
+	${RM} $(OBJS) $(BIN)
+
+$(BIN): $(OBJS)
+	@echo "  LD $(BIN)"
+	@$(CXX) $(OBJS) $(LDFLAGS) -o $(BIN)
+
+.cpp.o:
+	@echo "  CXX $<"
+	@$(CXX) $(CXXFLAGS) -c $< -o $@
+        
+.c.o:
+	@echo "  CC  $<"
+	@$(CC) $(CFLAGS) -c$< -o $@
