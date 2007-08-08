@@ -1,0 +1,29 @@
+iPHoneUtilityClient v0.5
+========================
+
+An AFC client meant to interface with the iPhone.
+
+NOTE: Currently getting this to build in windows is probably a HUGE pain.  If someone would like to contribute to the windows side of this app please let us known in #iphone.iphuc on irc.osx86.hu
+
+OS X Build Instructions:
+
+1)	Make sure you have readline from macports.
+
+As os x readline does not provide certain features we require, please install macports (www.macports.org) and use it to build the most recent version of readline.
+
+2)	Retrieve a copy of the most recent MobileDevice.h from http://iphone.fiveforty.net/wiki/index.php?title=MobileDevice.h and save it to this directory.  We apologize for this inconvenience.
+
+3)  Execute the following commands from within this directory:
+	./autogen.sh && ./configure --with-readline=/opt/local && make
+	
+4)	Execute iPHUC by typing
+	./iPHUC
+
+
+Soon we will include a script that will automate jailbreak, ssh installation, etc... just hold tight.
+
+Known Issues:
+If you attempt to putfile a file with size of zero, it messes up the AFC connection.  Restart iPHUC
+
+License:
+This software is released under the GPL v2.0.  For more information please see 'COPYING' in this directory.

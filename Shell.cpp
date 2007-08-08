@@ -17,10 +17,12 @@ char *dupstr( char *s )
 	return(r);
 }
 
+
 char** cmd_completer(const char *text, int start, int end)
 {
 	char **matches = (char **)NULL;
 
+#ifdef HAVE_READLINE_COMPLETION
 	/* If this word is at the start of the line, then it is a command
 	to complete.  Otherwise it is the name of a file in the current
 	directory. */
@@ -30,11 +32,12 @@ char** cmd_completer(const char *text, int start, int end)
 		matches = rl_completion_matches(text, cmd_generator);
 	} else if ( rl_sh->shell_mode == SHELL_NORMAL ) {
 		matches = rl_completion_matches(text, rl_remote_complete);
-		
 	}
+#endif
 	
 	return matches;
 }
+
 
 char* cmd_generator(const char *text, int state)
 {
@@ -61,25 +64,16 @@ void initialize_readline()
 {
 	/* Allow conditional parsing of the ~/.inputrc file. */
 	rl_readline_name = "iPHUC";
-/*
-#ifdef HAVE_READLINE_COMPLETION
-	if( rl_sh->shell_mode == SHELL_NORMAL )
-	{
-		//int _rl_match_hidden_files = 1;
-		//int rl_complete_with_tilde_expansion = 0;
-		//int _rl_completion_case_fold = 1;
-	}
-	
-#endif
-*/
+
 
 	// Tell the completer that we want a crack first.
 	rl_attempted_completion_function = cmd_completer;
-	
+
 	/* readline signal handling */
 	rl_catch_signals = 1;
 	rl_catch_sigwinch = 1;
 	rl_set_signals();
+	
 }
 
 int exec_line( char *line, struct shell_state *sh )
@@ -394,7 +388,6 @@ char *rl_remote_complete(const char *text, int state)
 			AFCDirectoryClose(0, tmp);
 		
 		return (ret);
-	
 	}
 	
 }
@@ -410,6 +403,7 @@ int shell(struct shell_state *sh)
 	//initialize readline
 	cur = sh->command_array; //hack
 	rl_sh = sh; //hack
+	
 	initialize_readline();
 	
 	while (1) {
