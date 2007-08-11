@@ -16,7 +16,6 @@ int n_lpwd(string *args, struct shell_state *sh)
 int n_setafc(string *args, struct shell_state *sh)
 {
 	
-	
 	if( args[1] == "" )
 	{
 		cout << "setafc: please provide a service name.";
@@ -26,13 +25,21 @@ int n_setafc(string *args, struct shell_state *sh)
 		
 		// Start AFC service
 		
+		signed int retval = AMDeviceStartService(sh->dev,
+			CFStringCreateWithCString(NULL, args[1].c_str(), kCFStringEncodingASCII),
+			&(sh->afch), NULL);
 		
-		cout	<< "AMDeviceStartService AFC: "
-			<< AMDeviceStartService(sh->dev,
-				CFStringCreateWithCString(NULL, args[1].c_str(), kCFStringEncodingASCII),
-				&(sh->afch), NULL)
-			<< endl;
-
+		if( retval )
+		{
+			cout	<< "setafc: AMDStartService Failed.  Retrying once." << endl;
+			
+			retval = 	AMDeviceStartService(sh->dev,
+					CFStringCreateWithCString(NULL, args[1].c_str(), kCFStringEncodingASCII),
+					&(sh->afch), NULL);
+		}
+		
+		cout	<< "AMDeviceStartService AFC: " << retval << endl;
+			
 		// Open an AFC Connection
 		cout	<< "AFCConnectionOpen: "
 			<< AFCConnectionOpen(sh->afch, 0, &(sh->conn))
@@ -337,12 +344,17 @@ int n_getfile(string *args, struct shell_state *sh)
 	if( args[1] == "" )
 	{
 	
-		// assume we want current remote dir
-		path = sh->remote_path;
+		// Must provide a path to a file to get.
+		cout	<< "getfile:  Please provide a path to a remote file."
+			<< endl;
+		
+		return SHELL_CONTINUE;
+		
 	} else if ( args[1].at(0) == '/' ) {
 	
 		// assume an abs path
 		path = args[1];
+	
 	} else {
 	
 		// assume we want something relative to remote_path
@@ -360,17 +372,18 @@ int n_getfile(string *args, struct shell_state *sh)
 		
 		processRelativePath(&args[2], &temp);
 	
-	} else if (args[2].at(0) == '/') {
+	} else if (args[2].at(0) != '/') {
 		
 		// assume we want something relative to local_path
 		string temp = sh->local_path;
 		processRelativePath(&temp, &args[2]);
 		args[2] = temp;
 	}
+
+	// check to see if args[2] is a directory.  If it is, should append the file
+	// name from args[1] to the end of args[2]
 	
-	cout << "remote: " << args[1] << endl;
-	cout << "local: " << args[2] << endl;
-	
+
 	get_file(sh, (char *)args[2].c_str(), (char *)args[1].c_str());
 	
 	return SHELL_CONTINUE;
@@ -477,7 +490,7 @@ void put_file(struct shell_state *sh, char *local_path, char *remote_path)
 	
 	cout << "putfile: Opening local file '" << local_path << "'" << endl;
 	
-	f = fopen(local_path, "r");
+	f = fopen(local_path, "rb");
 	if (!f) {
 		cout << "putfile: Failed to open local file '" << local_path << "'" << endl;
 		return;
@@ -629,7 +642,7 @@ void get_file(struct shell_state *sh, char *local_path, char *remote_path)
 		return;
 	}
 
-	f = fopen(local_path, "w");
+	f = fopen(local_path, "w+b");
 	if (f == NULL) {
 		cout << "getfile: Failed to open local file '" << local_path << "'" << endl;;
 		return;

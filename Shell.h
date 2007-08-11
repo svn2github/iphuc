@@ -21,6 +21,7 @@ Copyright (C) 2007  iPhoneDev Team ( http://iphone.fiveforty.net/wiki/ )
 #define SHELL_H
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <sys/types.h>
 
 extern "C"
@@ -35,16 +36,17 @@ extern "C"
 #include "RestoreInterface.h"
 #include "privateFunctions.h"
 
+#include "config.h"
+
 /* Unix version of a hidden file.  Could be different on other systems. */
 #define HIDDEN_FILE(fname)	((fname)[0] == '.')
-
 
 // TODO:  Add windows version of this?
 #define PATH_DELIMITER_CHAR '/'
 #define PATH_DELIMITER_STRING "/"
 
 #ifndef savestring
-#define savestring(x) strcpy ((char *)xmalloc (1 + strlen (x)), (x))
+#define savestring(x) strcpy ((char *)malloc (1 + strlen (x)), (x))
 #endif
 
 #define SHELL_UNKNOWN	-1
@@ -97,8 +99,7 @@ typedef char *rl_compentry_func_t (const char *, int);
 
 extern "C" int _rl_match_hidden_files;
 extern "C" int rl_complete_with_tilde_expansion;
-extern "C" int _rl_completion_case_fold;	
-extern "C" char *xmalloc (unsigned long size);
+extern "C" int _rl_completion_case_fold;
 extern "C" char **rl_completion_matches(const char *, rl_compentry_func_t *);
 extern "C" int rl_catch_signals;
 extern "C" int rl_catch_sigwinch;

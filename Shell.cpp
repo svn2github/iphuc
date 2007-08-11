@@ -1,6 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include "MobileDevice.h"
 #include "Shell.h"
 
 using namespace std;
@@ -12,7 +9,7 @@ shell_state *rl_sh;
 
 char *dupstr( char *s )
 {
-	char *r = xmalloc(strlen(s)+1);
+	char *r = (char *)malloc(strlen(s)+1);
 	strcpy(r,s);
 	return(r);
 }
@@ -65,14 +62,16 @@ void initialize_readline()
 	/* Allow conditional parsing of the ~/.inputrc file. */
 	rl_readline_name = "iPHUC";
 
-
 	// Tell the completer that we want a crack first.
 	rl_attempted_completion_function = cmd_completer;
 
 	/* readline signal handling */
 	rl_catch_signals = 1;
+
+#ifdef HAVE_READLINE_COMPLETION
 	rl_catch_sigwinch = 1;
 	rl_set_signals();
+#endif
 	
 }
 
@@ -320,7 +319,7 @@ char *rl_remote_complete(const char *text, int state)
 			}
 		}
 		
-		current_directory = (char *)xmalloc(temp->length());
+		current_directory = (char *)malloc(temp->length());
 		current_directory = savestring(temp->c_str());
 		
 		AFCDirectoryOpen(rl_sh->conn, current_directory, &directory);

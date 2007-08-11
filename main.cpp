@@ -219,7 +219,14 @@ int main(int argc, char **argv)
 {
 	struct am_device_notification *notif; 
 
-	cout << PACKAGE_STRING << endl;
+	cout << PACKAGE_STRING;
+
+#ifdef HAVE_READLINE_COMPLETION
+ 	cout << " with tab completion."<< endl;
+#else
+	cout << endl;
+#endif
+
 	cout << ">> By The iPhoneDev Team: " << AUTHOR_NICK_STRING << endl;
 	
 	//Call to SERIOUS_HACKERY
