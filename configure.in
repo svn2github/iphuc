@@ -1,5 +1,5 @@
-AC_INIT([iphuc], [0.5.0])
-AM_INIT_AUTOMAKE([iphuc], [0.5.0])
+AC_INIT([iphuc], [0.5.1])
+AM_INIT_AUTOMAKE([iphuc], [0.5.1])
 AC_DEFINE([AUTHOR_NICK_STRING],["nightwatch geohot ixtli warren nall mjc operator"],[Authors that have worked on this app])
 
 AM_CONFIG_HEADER([config.h])

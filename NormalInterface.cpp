@@ -383,7 +383,9 @@ int n_getfile(string *args, struct shell_state *sh)
 	// check to see if args[2] is a directory.  If it is, should append the file
 	// name from args[1] to the end of args[2]
 	
-
+	
+	
+	
 	get_file(sh, (char *)args[2].c_str(), (char *)args[1].c_str());
 	
 	return SHELL_CONTINUE;
