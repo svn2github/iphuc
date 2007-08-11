@@ -383,8 +383,14 @@ int n_getfile(string *args, struct shell_state *sh)
 	// check to see if args[2] is a directory.  If it is, should append the file
 	// name from args[1] to the end of args[2]
 	
-	
-	
+	DIR *tempdir = opendir( (const char*)args[2].c_str() );
+	if( tempdir )
+	{
+		string temp = args[1].substr( args[1].rfind("/",0) + 1, args[1].length() - 1 );
+		processRelativePath(&args[2], &temp);
+		
+		closedir(tempdir);
+	}
 	
 	get_file(sh, (char *)args[2].c_str(), (char *)args[1].c_str());
 	
@@ -428,6 +434,19 @@ int n_putfile(string *args, struct shell_state *sh)
 		processRelativePath(&temp, &args[2]);
 		args[2] = temp;
 
+	}
+	
+	// check to see if args[2] is a directory.  If it is, should append the file
+	// name from args[1] to the end of args[2]
+	
+	struct afc_directory *tempdir = (afc_directory *)NULL;
+	AFCDirectoryOpen(sh->conn, (char*)args[2].c_str() , &tempdir);
+	if( tempdir )
+	{
+		string temp = args[1].substr( args[1].rfind("/",0) + 1, args[1].length() - 1 );
+		processRelativePath(&args[2], &temp);
+		
+		AFCDirectoryClose(0, tempdir);
 	}
 	
 	put_file(sh, (char *)args[1].c_str(), (char *)args[2].c_str() );
@@ -526,6 +545,16 @@ void put_file(struct shell_state *sh, char *local_path, char *remote_path)
 	remote_path = (char *) remotePathStr.c_str();
 
 	size = fstat(fileno(f), &sb);
+	
+	// AFCFileRefWrite: Writing to remote file
+	// putfile: Failed to write to remote file: 11
+	// is usually caused by trying to write a file with size 0
+	if( sb.st_size == 0 )
+	{
+		cout << "putfile: Cannot write file with size " << sb.st_size << endl;
+		return;
+	}
+	
 	buf = (unsigned char *)malloc(sb.st_size);
 	
 	if(!buf)
