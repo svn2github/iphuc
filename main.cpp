@@ -83,8 +83,10 @@ void dfu_disconnect_callback(am_recovery_device *rdev) {
 
 void recovery_connect_callback(am_recovery_device *rdev)
 {
+	int retval = AMRestoreEnableFileLogging("restore.log");
+	
 	ifVerbose
-	cout << "recovery callback: Logging in restore.log: " << AMRestoreEnableFileLogging("restore.log") << endl;
+	cout << "recovery callback: Logging in restore.log: " << retval << endl;
 	
 	ifNotQuiet
 	cout << "recovery callback: Connected in Recovery Mode" << endl;
@@ -107,6 +109,15 @@ void recovery_connect_callback(am_recovery_device *rdev)
 	cout << "recovery callback: shell returned: " << ret << endl;
 	delete sh;
 	
+	switch(ret)
+	{
+		case SHELL_TERMINATE:
+			ifNotQuiet cout << ">> Nothing left to do. Exiting." << endl;
+			exit(0);
+		default:
+			ifVerbose cout << "recovery_connect_callback: Leaving." << endl;
+			break;
+	}
 }
 
 void recovery_disconnect_callback(am_recovery_device *rdev)
@@ -125,12 +136,10 @@ void notification(struct am_device_notification_callback_info *info)
 	//  Need more verbosity here.
 	if (msg == ADNCI_MSG_CONNECTED)
 	{
-		ifNotQuiet
-			cout << "notification: iPhone attached." << endl;
+		ifNotQuiet cout << "notification: iPhone attached." << endl;
 	
 		retval = AMDeviceConnect(dev);	
-		ifNotQuiet
-			cout << "AMDeviceConnect: " << retval << endl;
+		ifVerbose cout << "AMDeviceConnect: " << retval << endl;
 		
 		if (retval)
 		{
@@ -148,8 +157,7 @@ void notification(struct am_device_notification_callback_info *info)
 			
 			sh->restore_dev->port = socketForPort(sh->restore_dev, 0xf27e);
 			
-			ifVerbose
-				cout << ">> Restore Mode Port: " << sh->restore_dev->port << endl;
+			ifVerbose cout << ">> Restore Mode Port: " << sh->restore_dev->port << endl;
 			
 			sh->shell_mode = SHELL_RESTORE;
 			sh->command_array = restore_shell;
@@ -158,8 +166,7 @@ void notification(struct am_device_notification_callback_info *info)
 			sh->prompt_string = "(iPHUC Restore) ";
 		
 			//enter shell
-			ifNotQuiet
-				cout << "notification: Entering shell in Restore Mode." << endl;
+			ifVerbose cout << "notification: Entering shell in Restore Mode." << endl;
 			
 			shell_return_value = shell(sh);
 			delete sh;
@@ -171,17 +178,13 @@ void notification(struct am_device_notification_callback_info *info)
 		
 			// Enter normal mode
 			ret = AMDeviceIsPaired(sh->dev);
-			ifNotQuiet
-				cout 	<< "AMDeviceIsPaired: " << ret << endl;
+			ifVerbose cout << "AMDeviceIsPaired: " << ret << endl;
 			
 			ret = AMDeviceValidatePairing(sh->dev);
-			ifNotQuiet
-			cout 	<< "AMDeviceValidatePairing: " << ret << endl;
-			
+			ifVerbose cout	<< "AMDeviceValidatePairing: " << ret << endl;
 			
 			ret = AMDeviceStartSession(sh->dev);
-			ifNotQuiet
-			cout 	<< "AMDeviceStartSession: " << ret << endl;
+			ifVerbose cout	<< "AMDeviceStartSession: " << ret << endl;
 			
 			// Start AFC service
 			ret = AMDeviceStartService(sh->dev, cli_afc_name, &(sh->afch), NULL);
@@ -194,16 +197,14 @@ void notification(struct am_device_notification_callback_info *info)
 
 			// Open an AFC Connection
 			ret = AFCConnectionOpen(sh->afch, 0, &(sh->conn));
-			ifNotQuiet
-			cout	<< "AFCConnectionOpen: "
-				<< ret
-				<< endl;
+			ifVerbose cout	<< "AFCConnectionOpen: "
+					<< ret
+					<< endl;
 
 			/* Turns debug mode on if the environment variable AFCDEBUG is set to a numeric
 			 * value, or if the file '/AFCDEBUG' is present and contains a value. */
 	#if defined(__APPLE__)
-			ifVerbose
-			cout	<< "AFCPlatformInit: (no retval)" << endl;
+			ifVerbose cout	<< "AFCPlatformInit: (no retval)" << endl;
 			AFCPlatformInit();
 	#endif
 		
@@ -216,8 +217,7 @@ void notification(struct am_device_notification_callback_info *info)
 			sh->prompt_string = "(iPHUC) ";
 		
 			//enter shell		
-			ifNotQuiet
-			cout << "notification: Entering shell in Normal Mode." << endl;
+			ifVerbose cout << "notification: Entering shell in Normal Mode." << endl;
 			shell_return_value = shell(sh);
 	
 			delete sh;
@@ -228,8 +228,7 @@ void notification(struct am_device_notification_callback_info *info)
 		
 	
 	} else if ( msg == ADNCI_MSG_DISCONNECTED ) {
-		ifNotQuiet
-		cout << endl << "notification: Disconnected.  Waiting for suitable device reconnect." << endl;
+		ifNotQuiet cout << endl << "notification: Disconnected.  Waiting for suitable device reconnect." << endl;
 		shell_return_value = SHELL_WAIT;
 	}
 	
@@ -244,12 +243,10 @@ void notification(struct am_device_notification_callback_info *info)
 #endif
 			break;
 		case SHELL_WAIT:
-			ifNotQuiet
-			cout << ">> Waiting for device reconnect." << endl;
+			ifNotQuiet cout << ">> Waiting for device reconnect." << endl;
 			break;
 		default:
-			ifNotQuiet
-			cout << ">> Shell could not recover.  Exiting." << endl;
+			ifNotQuiet cout << ">> Shell could not recover.  Exiting." << endl;
 #if !defined(__APPLE__)
 			run = false;
 #else
@@ -302,9 +299,7 @@ int main(int argc, char **argv)
 	
 	// default afc "com.apple.afc"
 	if( !cli_afc_name )
-	{
 		cli_afc_name = AMSVC_AFC;
-	}
 	
 	ifNotQuiet cout << PACKAGE_STRING;
 #ifdef HAVE_READLINE_COMPLETION
@@ -313,22 +308,19 @@ int main(int argc, char **argv)
 	ifNotQuiet cout << endl;
 #endif
 	
-	ifNotQuiet
-		cout << ">> By The iPhoneDev Team: " << AUTHOR_NICK_STRING << endl;
+	ifNotQuiet cout << ">> By The iPhoneDev Team: " << AUTHOR_NICK_STRING << endl;
 	
 	//Call to SERIOUS_HACKERY
-	ifNotQuiet
-		cout << "initPrivateFunctions: ";
+	ifVerbose cout << "initPrivateFunctions: ";
 	
 	initPrivateFunctions();
 	
-	ifNotQuiet cout << endl;
+	ifVerbose cout << endl;
 	//End SERIOUS_HACKERY
 	
 	retval = AMDeviceNotificationSubscribe(notification, 0, 0, 0, &notif);
 	
-	ifNotQuiet
-		cout	<< "AMDeviceNotificationSubscribe: "
+	ifVerbose cout	<< "AMDeviceNotificationSubscribe: "
 			<< retval
 			<< endl;
 	
@@ -340,19 +332,21 @@ int main(int argc, char **argv)
 					0,
 					NULL);
 					
-	if (ret != 0) {
-		ifNotQuiet
-			cout << "Problem registering recovery callback: " << ret << endl;
+	
+	ifVerbose cout	<< "AMRestoreRegisterForDeviceNotifications: "
+			<< retval << endl;
+	
+	if (ret != 0)
+	{
+		ifNotQuiet cout << "Problem registering recovery callback.  Exiting." << endl;
 		return EXIT_FAILURE;
 	}
 	
-	ifNotQuiet
-		cout << "CFRunLoop: Waiting for iPhone." << endl;
+	ifNotQuiet cout << "CFRunLoop: Waiting for iPhone." << endl;
 
 #if defined(__APPLE__)
 	CFRunLoopRun();
-	ifNotQuiet
-		cout << "main: CFRunLoop returned somehow, exiting.  Please report." << endl;
+	ifNotQuiet cout << "main: CFRunLoop returned somehow, exiting.  Please report." << endl;
 	return 1;
 #else
 	while (run) {

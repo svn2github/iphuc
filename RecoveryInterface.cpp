@@ -140,3 +140,8 @@ int recovery_cmd(string *args, struct shell_state *sh)
 	
 	return SHELL_CONTINUE;
 }
+
+int recovery_disconnect(string *args, struct shell_state *sh)
+{
+	return SHELL_WAIT;
+}
