@@ -36,6 +36,7 @@ COMMAND normal_shell[] =
 	{ "lpwd",          n_lpwd,          ">> lpwd - Display the current local working directory." },
 	{ "pwd",           n_pwd,           ">> pwd - Display the current remote working directory." },
 	{ "setafc",	   n_setafc,	    ">> setafc <name string> - Set the name of the afc service to use."},
+	{ "run",	   sh_run,	    ">> run <path> - runs a script at <path>."},
 	{ (char *)NULL, (shell_funct *)NULL, (char *)NULL }
 };
 
@@ -51,6 +52,7 @@ COMMAND restore_shell[] =
 	{ "force",		restore_force,		">> force <command> - send cmd to phone."},
 	{ "help",		sh_help, 	        ">> help <command> - Display help information on <command>.  No args lists commands." },
 	{ "exit",		restore_exit,         	">> exit - Disconnect and wait for device normal reconnect." },
+	{ "run",		sh_run,			">> run <path> - runs a script at <path>."},
 	{ (char *)NULL, (shell_funct *)NULL, (char *)NULL }
 };
 
@@ -63,6 +65,7 @@ COMMAND recovery_shell[] =
 	{ "cmd",		recovery_cmd,			">> cmd <command> - send command to phone."},
 	{ "exit",         	n_exit,          		">> exit - Escape to shell.  The other shell, the one whos child i am." },	
 	{ "help",		sh_help,			">> help <command> - Display help information on <command>.  No args lists commands." },
+	{ "run",		sh_run,				">> run <path> - runs a script at <path>."},
 	{ (char *)NULL, (shell_funct *)NULL, (char *)NULL }
 };
 
@@ -220,8 +223,9 @@ void notification(struct am_device_notification_callback_info *info)
 			delete sh;
 		}
 		
-		ifVerbose
-		cout << "notification: Shell returned " << shell_return_value << endl;
+
+		ifVerbose cout << "notification: Shell returned " << shell_return_value << endl;
+		
 	
 	} else if ( msg == ADNCI_MSG_DISCONNECTED ) {
 		ifNotQuiet
@@ -232,8 +236,7 @@ void notification(struct am_device_notification_callback_info *info)
 	switch (shell_return_value)
 	{
 		case SHELL_TERMINATE:
-			ifNotQuiet
-			cout << ">> Nothing left to do. Exiting." << endl;
+			ifNotQuiet cout << ">> Nothing left to do. Exiting." << endl;
 #if !defined(__APPLE__)
 			run = false;
 #else
@@ -260,7 +263,7 @@ int main(int argc, char **argv)
 {
 	struct am_device_notification *notif; 
 	int c;
-	short int cli_flags;
+	short int cli_flags = 0;
 	mach_error_t retval;
 	
 	while ((c = getopt (argc, argv, "qvs:o:a:")) != -1 )
@@ -271,8 +274,7 @@ int main(int argc, char **argv)
 			cli_flags = cli_flags | OPT_QUIET;
 			break;
 		case 'v':
-			if( !(cli_flags & OPT_QUIET) )
-				cli_flags = cli_flags | OPT_VERBOSE;
+			cli_flags = cli_flags | OPT_VERBOSE;
 			break;
 		case 's':
 			cli_flags = cli_flags | OPT_SCRIPT;
@@ -295,7 +297,7 @@ int main(int argc, char **argv)
 			abort();
 		}
 	}
-
+	
 	setcliflags( cli_flags );
 	
 	// default afc "com.apple.afc"
@@ -304,14 +306,11 @@ int main(int argc, char **argv)
 		cli_afc_name = AMSVC_AFC;
 	}
 	
-	ifNotQuiet
-		cout << PACKAGE_STRING;
+	ifNotQuiet cout << PACKAGE_STRING;
 #ifdef HAVE_READLINE_COMPLETION
- 	ifNotQuiet
-		cout << " with tab completion."<< endl;
+ 	ifNotQuiet cout << " with tab completion."<< endl;
 #else
-	ifNotQuiet
-		cout << endl;
+	ifNotQuiet cout << endl;
 #endif
 	
 	ifNotQuiet
@@ -323,8 +322,7 @@ int main(int argc, char **argv)
 	
 	initPrivateFunctions();
 	
-	ifNotQuiet
-		cout << endl;
+	ifNotQuiet cout << endl;
 	//End SERIOUS_HACKERY
 	
 	retval = AMDeviceNotificationSubscribe(notification, 0, 0, 0, &notif);

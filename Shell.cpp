@@ -392,14 +392,70 @@ char *rl_remote_complete(const char *text, int state)
 	
 }
 
+int run_script(string *path, struct shell_state *sh)
+{
+	int retval;
+	string command;
+	
+	ifVerbose cout << "shell: Opening script '" << *path << "'" << endl;
+		
+	fstream f( (const char*)path->c_str(), ios::in );
+	
+	if(!f.is_open())
+	{
+		ifNotQuiet cout << "shell: could not open script '" << *path << "'" << endl;
+		return -1;
+	}
+	
+	ifNotQuiet cout << "shell: Reading script." << endl;
+	
+	while( !f.eof() )
+	{
+		getline( f, command );
+		
+		ifVerbose cout << command << endl;
+		retval = exec_line((char *)command.c_str(), sh);
+		
+		switch( retval )
+		{
+			case SHELL_CONTINUE:
+				break;
+
+			case SHELL_TERMINATE:
+				if (sh->shell_mode == SHELL_NORMAL)
+					AFCConnectionClose(sh->conn);
+				f.close();
+				return retval;
+				// AMDeviceStopSession(dev);
+
+			case SHELL_WAIT:
+				if (sh->shell_mode == SHELL_NORMAL)
+					AFCConnectionClose(sh->conn);
+				f.close();
+				return retval;
+				// AMDeviceStopSession(dev);
+				
+			default:
+				ifNotQuiet cout	<< "shell: Function returned unknown error: "
+						<< retval << endl;
+				f.close();
+				return retval;
+		}
+		
+		
+	}
+	
+	f.close();
+	return retval;
+}
+
 int shell(struct shell_state *sh)
 {
 	char *line;
 	string prompt;
 	int retval;
 	
-	ifVerbose
-	cout << "shell: Entering loop." << endl;
+	ifVerbose cout << "shell: Entering loop." << endl;
 	
 	//initialize readline
 	cur = sh->command_array; //hack
@@ -407,29 +463,11 @@ int shell(struct shell_state *sh)
 	
 	initialize_readline();
 	
+	// If -s script is specified, run it and exit
 	if ( cli_flags & OPT_SCRIPT )
-	{
-		ifVerbose
-			cout << "shell: Opening script '" << cli_script_path << "'" << endl;
-			
-		FILE *f = fopen((char *) cli_script_path.c_str(), "r");
-		
-		if(!f)
-		{
-			ifNotQuiet
-				cout << "shell: could not find script '" << cli_script_path << "'" << endl;
-			return -1;
-		}
-		
-		ifNotQuiet
-			cout << "shell: Scripting Not Implimented, Sorry." << endl;
-		
-		if(f)
-			fclose(f);
-			
-		return 0;
-	}
+		return run_script(&cli_script_path, sh); 
 	
+	// oneshot?
 	if ( cli_flags & OPT_ONESHOT )
 		return exec_line((char *)cli_script_path.c_str(), sh);
 	
@@ -440,8 +478,7 @@ int shell(struct shell_state *sh)
 		
 		if (line == (char *)NULL)
 		{
-			ifNotQuiet
-				cout << "shell: Readline error.  Probably memory allocation related." << endl;
+			ifNotQuiet cout << "shell: Readline error.  Probably memory allocation related." << endl;
 			return SHELL_TERMINATE;
 		} else if (line[0] != '\0') {
 			add_history(line);
@@ -479,9 +516,35 @@ int shell(struct shell_state *sh)
 					cout	<< "shell: Function returned unknown error: "
 						<< retval << endl;
 				return retval;
-		}
-		
+		}	
 	}
+}
+
+int sh_run( string *args, struct shell_state *sh)
+{
+	string path;
+	int retval;
+	
+	if( args[1] == "" )
+	{
+		ifNotQuiet cout	<< "run: please specify a script to run" << endl;
+		return SHELL_CONTINUE;
+	} else if ( args[1].at(0) == '/' ) {
+	
+		// assume an abs path
+		path = args[1];
+	} else {
+	
+		// assume we want something relative to local_path
+		path = sh->local_path;
+		processRelativePath(&path, &args[1]);
+		args[1] = path;
+	}
+	
+	ifVerbose cout << "run: Running script '" << path << "'" << endl;
+	retval = run_script(&path, sh);
+	ifVerbose cout << "run: Script exited with status: " << retval << endl;
+	return SHELL_CONTINUE;
 }
 
 int sh_help(string *args, struct shell_state *sh)

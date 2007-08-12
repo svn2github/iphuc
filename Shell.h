@@ -25,6 +25,9 @@ Copyright (C) 2007  iPhoneDev Team ( http://iphone.fiveforty.net/wiki/ )
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
+#include <limits.h>
+#include <iostream>
+#include <fstream>
 
 extern "C"
 {
@@ -49,8 +52,8 @@ extern "C"
 #define OPT_ONESHOT	8	//o oneshot
 #define OPT_AFCNAME	16	//a afcname
 
-#define ifNotQuiet		if( !(getcliflags() & OPT_QUIET))
-#define ifVerbose		if( (getcliflags() & OPT_VERBOSE) )
+#define ifNotQuiet		if( !(getcliflags() & OPT_QUIET) )
+#define ifVerbose		if( getcliflags() & OPT_VERBOSE )
 
 /* Unix version of a hidden file.  Could be different on other systems. */
 #define HIDDEN_FILE(fname)	((fname)[0] == '.')
@@ -136,6 +139,7 @@ bool dirExists(afc_connection *hAFC, char *path);
 void processRelativePath(string *basePath, string *cdPath);
 int shell(struct shell_state *sh);
 int sh_help(string *args, struct shell_state *sh);
+int sh_run( string *args, struct shell_state *sh);
 char *rl_remote_complete(const char *text, int state);
 void setcliflags( short int flags );
 short int getcliflags();

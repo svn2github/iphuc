@@ -19,8 +19,7 @@ static ricmdsend priv_socketForPort;
 
 int initPrivateFunctions() {
 
-	ifVerbose
-	cout << "this is still not clean.  Architecture: ";
+	ifVerbose cout << "this is still not clean.  Architecture: ";
 
 #if defined(WIN32)
  
@@ -32,8 +31,7 @@ int initPrivateFunctions() {
 	hGetProcIDDLL = GetModuleHandle("iTunesMobileDevice.dll");
 	
 	if (!hGetProcIDDLL) {
-		ifNotQuiet
-		cout << "Could not find dll in memory" << endl;
+		ifNotQuiet cout << "Could not find dll in memory" << endl;
 		return EXIT_FAILURE;
 	}
 	
@@ -67,15 +65,13 @@ int initPrivateFunctions() {
     // 3c3a52dc t __sendFileToDevice
     // 3c3a0644 t __socketForPort
 #if defined(__POWERPC__)
-	ifVerbose
-	cout << "powerpc ";
+	ifVerbose cout << "powerpc ";
 	priv_sendCommandToDevice = (cmdsend)(0x3c3a517c);
 	priv_sendFileToDevice = (cmdsend)(0x3c3a52dc);
 	priv_performOperation = (rcmdsend)(0x3c3a0e14);
 	priv_socketForPort = (ricmdsend)(0x3c3a0644);
 #else    
-	ifVerbose
-	cout << "i386 ";
+	ifVerbose cout << "i386 ";
 	priv_sendCommandToDevice = (cmdsend)(0x3c3a3e3b);
 	priv_sendFileToDevice = (cmdsend)(0x3c3a4087);
 	priv_performOperation = (rcmdsend)(0x3c39fa4b);
@@ -83,8 +79,7 @@ int initPrivateFunctions() {
 #endif
 
 #else
-	ifVerbose
-	cout << "NONE.  Platform not supported! " << endl;
+	ifVerbose cout << "NONE.  Platform not supported! " << endl;
 #endif
 	return EXIT_SUCCESS;
 }
