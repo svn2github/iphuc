@@ -280,7 +280,7 @@ int main(int argc, char **argv)
 			break;
 		case 'o':
 			cli_flags = cli_flags | OPT_ONESHOT;
-			if ( !cli_flags & OPT_SCRIPT )
+			if ( !(cli_flags & OPT_SCRIPT) )
 				setscriptpath( optarg );
 			break;
 		case 'a':

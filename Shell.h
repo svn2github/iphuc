@@ -50,7 +50,7 @@ extern "C"
 #define OPT_AFCNAME	16	//a afcname
 
 #define ifNotQuiet		if( !(getcliflags() & OPT_QUIET))
-#define ifVerbose		if( !(getcliflags() & OPT_VERBOSE))
+#define ifVerbose		if( (getcliflags() & OPT_VERBOSE) )
 
 /* Unix version of a hidden file.  Could be different on other systems. */
 #define HIDDEN_FILE(fname)	((fname)[0] == '.')

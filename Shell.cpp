@@ -407,6 +407,32 @@ int shell(struct shell_state *sh)
 	
 	initialize_readline();
 	
+	if ( cli_flags & OPT_SCRIPT )
+	{
+		ifVerbose
+			cout << "shell: Opening script '" << cli_script_path << "'" << endl;
+			
+		FILE *f = fopen((char *) cli_script_path.c_str(), "r");
+		
+		if(!f)
+		{
+			ifNotQuiet
+				cout << "shell: could not find script '" << cli_script_path << "'" << endl;
+			return -1;
+		}
+		
+		ifNotQuiet
+			cout << "shell: Scripting Not Implimented, Sorry." << endl;
+		
+		if(f)
+			fclose(f);
+			
+		return 0;
+	}
+	
+	if ( cli_flags & OPT_ONESHOT )
+		return exec_line((char *)cli_script_path.c_str(), sh);
+	
 	while (1) {
 
 		prompt = sh->prompt_string + sh->remote_path+ ": ";
