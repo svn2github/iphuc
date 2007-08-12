@@ -43,6 +43,9 @@ extern "C"
 
 #include "config.h"
 
+//REMOVE
+#define DEBUG 1
+
 /* Defines for testing command line arguments passed to iphuc */
 // max number of command line options is limited to sizeof(short int)
 // which is always 2 bytes (16 bits)
@@ -51,9 +54,16 @@ extern "C"
 #define OPT_SCRIPT	4	//s script
 #define OPT_ONESHOT	8	//o oneshot
 #define OPT_AFCNAME	16	//a afcname
+#define OPT_DEBUG	32	//d debug
 
 #define ifNotQuiet		if( !(getcliflags() & OPT_QUIET) )
 #define ifVerbose		if( getcliflags() & OPT_VERBOSE )
+
+#ifdef DEBUG
+#define D(string)		if( getcliflags() & OPT_DEBUG ) cout << "debug: " << string << endl
+#else 
+#define D(string)		
+#endif
 
 /* Unix version of a hidden file.  Could be different on other systems. */
 #define HIDDEN_FILE(fname)	((fname)[0] == '.')

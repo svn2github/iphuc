@@ -263,15 +263,17 @@ int main(int argc, char **argv)
 	short int cli_flags = 0;
 	mach_error_t retval;
 	
-	while ((c = getopt (argc, argv, "qvs:o:a:")) != -1 )
+	while ((c = getopt (argc, argv, "qvs:o:a:d")) != -1 )
 	{
 		switch (c)
 		{
 		case 'q':
 			cli_flags = cli_flags | OPT_QUIET;
+			D("Quiet flag set");
 			break;
 		case 'v':
 			cli_flags = cli_flags | OPT_VERBOSE;
+			D("Verbose flag set");
 			break;
 		case 's':
 			cli_flags = cli_flags | OPT_SCRIPT;
@@ -284,7 +286,13 @@ int main(int argc, char **argv)
 			break;
 		case 'a':
 			cli_flags = cli_flags | OPT_AFCNAME;
+			D("Afcname flag set.");
 			cli_afc_name = CFStringCreateWithCString(NULL, optarg, kCFStringEncodingASCII);
+			D(optarg);
+			break;
+		case 'd':
+			cli_flags = cli_flags | OPT_DEBUG;
+			D("Debug flag set.");
 			break;
 		case '?':
 			cout << "getopt: unknown option." << endl;
@@ -296,10 +304,13 @@ int main(int argc, char **argv)
 	}
 	
 	setcliflags( cli_flags );
-	
+		
 	// default afc "com.apple.afc"
 	if( !cli_afc_name )
+	{
 		cli_afc_name = AMSVC_AFC;
+		D("Set default afc name.");
+	}
 	
 	ifNotQuiet cout << PACKAGE_STRING;
 #ifdef HAVE_READLINE_COMPLETION
@@ -309,6 +320,8 @@ int main(int argc, char **argv)
 #endif
 	
 	ifNotQuiet cout << ">> By The iPhoneDev Team: " << AUTHOR_NICK_STRING << endl;
+	
+	D("debug mode on.");
 	
 	//Call to SERIOUS_HACKERY
 	ifVerbose cout << "initPrivateFunctions: ";

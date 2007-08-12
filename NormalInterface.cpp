@@ -31,19 +31,19 @@ int n_setafc(string *args, struct shell_state *sh)
 		
 		if( retval )
 		{
-			cout	<< "setafc: AMDStartService Failed.  Retrying once." << endl;
+			ifNotQuiet cout	<< "setafc: AMDStartService Failed.  Retrying once." << endl;
 			
 			retval = 	AMDeviceStartService(sh->dev,
 					CFStringCreateWithCString(NULL, args[1].c_str(), kCFStringEncodingASCII),
 					&(sh->afch), NULL);
 		}
 		
-		cout	<< "AMDeviceStartService AFC: " << retval << endl;
+		ifNotQuiet cout	<< "AMDeviceStartService AFC: " << retval << endl;
 			
 		// Open an AFC Connection
-		cout	<< "AFCConnectionOpen: "
-			<< AFCConnectionOpen(sh->afch, 0, &(sh->conn))
-			<< endl;
+		ifNotQuiet cout	<< "AFCConnectionOpen: "
+				<< AFCConnectionOpen(sh->afch, 0, &(sh->conn))
+				<< endl;
 	}
 		
 	return SHELL_CONTINUE;
@@ -55,7 +55,7 @@ int n_cd(string *args, struct shell_state *sh)
 	// check for argument
 	if(args[1] == "")
 	{
-		cout << "cd: Please specify a path." << endl;
+		ifNotQuiet cout << "cd: Please specify a path." << endl;
 		return SHELL_CONTINUE;
 		
 	} else {
@@ -69,10 +69,12 @@ int n_cd(string *args, struct shell_state *sh)
 		
 		processRelativePath( &temp, &args[1] );
 		
+		D("setting remote_path: " << temp );
+		
 		if (dirExists(sh->conn, (char *)temp.c_str()))
 			sh->remote_path=temp; 
 		else
-			cout << "cd: No such file or directory '" << temp << "'" << endl;
+			ifNotQuiet cout << "cd: No such file or directory '" << temp << "'" << endl;
 	}
 	return SHELL_CONTINUE;
 }
@@ -84,7 +86,7 @@ int n_lcd(string *args, struct shell_state *sh)
 	// check for argument
 	if(args[1] == "")
 	{
-		cout << "lcd: Please specify a path." << endl;
+		ifNotQuiet cout << "lcd: Please specify a path." << endl;
 		return SHELL_CONTINUE;
 	} else {
 		
@@ -98,10 +100,11 @@ int n_lcd(string *args, struct shell_state *sh)
 
 	DIR *f = opendir(temp.c_str());
 	if (f == NULL) {
-		cout << "lcd: local file '" << temp << "' does not exist or is not a directory." << endl;
+		ifNotQuiet cout << "lcd: local file '" << temp << "' does not exist or is not a directory." << endl;
 	} else {
 		closedir(f);
 		sh->local_path=temp;
+		D("dir found.  local_path set to " << temp);
 	}
 
 	return SHELL_CONTINUE;
@@ -132,9 +135,11 @@ int n_ls(string *args, struct shell_state *sh)
 	
 	}
 	
+	D("displaying directory listing for "<<ls_dir);
+	
 	// open the dir for reading
 	if (AFCDirectoryOpen(sh->conn, (char *)ls_dir.c_str(), &dir)) {
-		cout << "ls: Directory '" << ls_dir << "' does not exist." << endl;
+		ifNotQuiet cout << "ls: Directory '" << ls_dir << "' does not exist." << endl;
 		return SHELL_CONTINUE;
 	}
 	
@@ -173,9 +178,11 @@ int n_mkdir(string *args, struct shell_state *sh)
 		}
 	}
 	
+	D("making remote dir "<<path);
+	
 	retval = AFCDirectoryCreate(sh->conn, (char *)path.c_str() );
 	if ( retval )
-		cout << "mkdir: AFCDirectoryCreate returned unknown error code: " << retval << endl;
+		ifNotQuiet cout << "mkdir: AFCDirectoryCreate returned unknown error code: " << retval << endl;
 	
 	return SHELL_CONTINUE;
 }
@@ -201,13 +208,15 @@ int n_rmdir(string *args, struct shell_state *sh)
 		processRelativePath(&path, &args[1]);
 	}
 	
+	D("removing remote dir "<<path);
+	
 	retval = AFCRemovePath(sh->conn, (char *)path.c_str() );
 	switch(retval)
 	{
 		case 1:
-			cout << "rmdir: Could not remove directory, make sure it is empty." << endl;
+			ifNotQuiet cout << "rmdir: Could not remove directory, make sure it is empty." << endl;
 		default:
-			cout << "rmdir: AFCRemovePath returned unknown error code: " << retval << endl;
+			ifNotQuiet cout << "rmdir: AFCRemovePath returned unknown error code: " << retval << endl;
 	}
 	
 	return SHELL_CONTINUE;
@@ -221,8 +230,11 @@ int n_activate(string *args, struct shell_state *sh)
 
 int n_deactivate(string *args, struct shell_state *sh)
 {
-	cout << "AMDeviceDeavtivate: " << AMDeviceDeactivate(sh->dev) << endl;
-	cout << "deactivate: device deactivated." << endl;
+	D("deactivating phone");
+	int ret = AMDeviceDeactivate(sh->dev);
+	
+	ifNotQuiet cout << "AMDeviceDeavtivate: " << ret << endl;
+	ifNotQuiet cout << "deactivate: device deactivated." << endl;
 	return SHELL_CONTINUE;
 }
 
@@ -252,7 +264,7 @@ int n_readvalue(string *args, struct shell_state *sh)
 {
 	if( args[1] == "" )
 	{
-		cout << "readvalue: Please enter a value to be read" << endl;
+		ifNotQuiet cout << "readvalue: Please enter a value to be read" << endl;
 		return SHELL_CONTINUE;
 	}
 	
@@ -262,20 +274,24 @@ int n_readvalue(string *args, struct shell_state *sh)
 		//Windows handling code goes here!
 		CFShow(result);
 	else
-		cout << "readvalue: Error reading value '" << args[1] << "'" << endl;
+		ifNotQuiet cout << "readvalue: Error reading value '" << args[1] << "'" << endl;
 		
 	return SHELL_CONTINUE;
 }
 
 int n_enterrecovery(string *args, struct shell_state *sh)
 {
-	cout << "AMDeviceEnterRecovery: " << AMDeviceEnterRecovery(sh->dev) << endl;
+	int ret = AMDeviceEnterRecovery(sh->dev);
+	ifNotQuiet cout << "AMDeviceEnterRecovery: " << ret << endl;
+	
+	D("Why did you do this?  Please let us know.");
+	
 	return SHELL_CONTINUE;
 }
 
 int n_reconnect(string *args, struct shell_state *sh)
 {
-	cout << "shell: Terminating and waiting for device reconnect." << endl;
+	ifNotQuiet cout << "shell: Terminating and waiting for device reconnect." << endl;
 	return SHELL_WAIT;
 }
 
@@ -283,7 +299,7 @@ int n_startservice(string *args, struct shell_state *sh)
 {
 	
 	
-	cout << "shell: Starting service '" << args[1] << "'" << endl; 
+	ifVerbose cout << "shell: Starting service '" << args[1] << "'" << endl; 
 	
 	afc_error_t ret = AMDeviceStartService(	sh->dev,
 						CFStringCreateWithCString(	NULL,
@@ -293,9 +309,9 @@ int n_startservice(string *args, struct shell_state *sh)
 						NULL);
 	
 	if( !ret )
-		cout << "AMDeviceStartService: Service started" << endl;
+		ifNotQuiet cout << "AMDeviceStartService: Service started" << endl;
 	else
-		cout << "AMDeviceStartService: Service not found: " << ret << endl;
+		ifNotQuiet cout << "AMDeviceStartService: Service not found: " << ret << endl;
 		
 	return SHELL_CONTINUE;
 	
@@ -322,6 +338,8 @@ int n_getfilesize(string *args, struct shell_state *sh)
 		processRelativePath(&path, &args[1]);
 	}
 	
+	D("getting file size for "<<path);
+	
 	size = get_file_size(sh->conn, (char *)path.c_str());
 	cout << "getfilesize: " << size << " bytes" << endl;
 
@@ -335,8 +353,8 @@ int n_getfile(string *args, struct shell_state *sh)
 	// make sure we're only talkin one file here
 	if( dirExists(sh->conn, (char *)args[1].c_str() ) )
 	{
-		cout	<< "getfile: Cannot retreive '" << args[1]
-			<< "' as it appears to be a directory." << endl;
+		ifNotQuiet cout	<< "getfile: Cannot retreive '" << args[1]
+				<< "' as it appears to be a directory." << endl;
 		
 		return SHELL_CONTINUE;
 	}
@@ -345,8 +363,8 @@ int n_getfile(string *args, struct shell_state *sh)
 	{
 	
 		// Must provide a path to a file to get.
-		cout	<< "getfile:  Please provide a path to a remote file."
-			<< endl;
+		ifNotQuiet cout	<< "getfile:  Please provide a path to a remote file."
+				<< endl;
 		
 		return SHELL_CONTINUE;
 		
@@ -379,7 +397,7 @@ int n_getfile(string *args, struct shell_state *sh)
 		processRelativePath(&temp, &args[2]);
 		args[2] = temp;
 	}
-
+	
 	// check to see if args[2] is a directory.  If it is, should append the file
 	// name from args[1] to the end of args[2]
 	
@@ -392,6 +410,8 @@ int n_getfile(string *args, struct shell_state *sh)
 		closedir(tempdir);
 	}
 	
+	D("getting remote file: "<< args[1]);
+	D("getting local file"<< args[2]);
 	get_file(sh, (char *)args[2].c_str(), (char *)args[1].c_str());
 	
 	return SHELL_CONTINUE;

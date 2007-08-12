@@ -65,13 +65,16 @@ void initialize_readline()
 
 	// Tell the completer that we want a crack first.
 	rl_attempted_completion_function = cmd_completer;
-
+	D("rl_attempted_completion_function registered");
+	
 	/* readline signal handling */
 	rl_catch_signals = 1;
+	D("rl_catch_signals set");
 
 #ifdef HAVE_READLINE_COMPLETION
 	rl_catch_sigwinch = 1;
 	rl_set_signals();
+	D("rl_catch_sigwinch set");
 #endif
 	
 }
@@ -400,7 +403,8 @@ int run_script(string *path, struct shell_state *sh)
 	ifVerbose cout << "shell: Opening script '" << *path << "'" << endl;
 		
 	fstream f( (const char*)path->c_str(), ios::in );
-	
+	D("script file open.");
+
 	if(!f.is_open())
 	{
 		ifNotQuiet cout << "shell: could not open script '" << *path << "'" << endl;
@@ -412,6 +416,7 @@ int run_script(string *path, struct shell_state *sh)
 	while( !f.eof() )
 	{
 		getline( f, command );
+		D(command);
 		
 		ifVerbose cout << command << endl;
 		retval = exec_line((char *)command.c_str(), sh);
@@ -422,23 +427,29 @@ int run_script(string *path, struct shell_state *sh)
 				break;
 
 			case SHELL_TERMINATE:
+				D("run caught SHELL_TERMINATE");
 				if (sh->shell_mode == SHELL_NORMAL)
 					AFCConnectionClose(sh->conn);
 				f.close();
+				D("script file closed");
 				return retval;
 				// AMDeviceStopSession(dev);
 
 			case SHELL_WAIT:
+				D("run caught SHELL_WAIT");
 				if (sh->shell_mode == SHELL_NORMAL)
 					AFCConnectionClose(sh->conn);
 				f.close();
+				D("script file closed");
 				return retval;
 				// AMDeviceStopSession(dev);
 				
 			default:
+				D("run caught unknown return value");
 				ifNotQuiet cout	<< "shell: Function returned unknown error: "
 						<< retval << endl;
 				f.close();
+				D("script file closed");
 				return retval;
 		}
 		
@@ -446,6 +457,7 @@ int run_script(string *path, struct shell_state *sh)
 	}
 	
 	f.close();
+	D("script file closed");
 	return retval;
 }
 
@@ -461,15 +473,22 @@ int shell(struct shell_state *sh)
 	cur = sh->command_array; //hack
 	rl_sh = sh; //hack
 	
+	D("initializing readline");
 	initialize_readline();
 	
 	// If -s script is specified, run it and exit
 	if ( cli_flags & OPT_SCRIPT )
+	{
+		D("script: " << cli_script_path);
 		return run_script(&cli_script_path, sh); 
+	}
 	
 	// oneshot?
 	if ( cli_flags & OPT_ONESHOT )
+	{
+		D("oneshot: " << cli_script_path);
 		return exec_line((char *)cli_script_path.c_str(), sh);
+	}
 	
 	while (1) {
 
@@ -481,10 +500,12 @@ int shell(struct shell_state *sh)
 			ifNotQuiet cout << "shell: Readline error.  Probably memory allocation related." << endl;
 			return SHELL_TERMINATE;
 		} else if (line[0] != '\0') {
+			D(line);
 			add_history(line);
 			retval = exec_line(line, sh);
 		} else {
 			//blank line == help
+			D("blank line == help");
 			line = (char *)malloc(sizeof(char)*5);
 			strcpy(line, "help");
 			retval = exec_line(line, sh);
@@ -497,6 +518,7 @@ int shell(struct shell_state *sh)
 				break;
 			
 			case SHELL_TERMINATE:
+				D("caught SHELL_TERMINATE");
 				free(line);
 				if (sh->shell_mode == SHELL_NORMAL)
 					AFCConnectionClose(sh->conn);
@@ -504,6 +526,7 @@ int shell(struct shell_state *sh)
 				return retval;
 			
 			case SHELL_WAIT:
+				D("caught SHELl_WAIT");
 				free(line);
 				if (sh->shell_mode == SHELL_NORMAL)
 					AFCConnectionClose(sh->conn);
@@ -511,6 +534,7 @@ int shell(struct shell_state *sh)
 				return retval;
 				
 			default:
+				D("shell caught unknown return value");
 				free(line);
 				ifNotQuiet
 					cout	<< "shell: Function returned unknown error: "
@@ -525,6 +549,8 @@ int sh_run( string *args, struct shell_state *sh)
 	string path;
 	int retval;
 	
+	
+	
 	if( args[1] == "" )
 	{
 		ifNotQuiet cout	<< "run: please specify a script to run" << endl;
@@ -533,12 +559,14 @@ int sh_run( string *args, struct shell_state *sh)
 	
 		// assume an abs path
 		path = args[1];
+		D("absoulte path: " << path );
 	} else {
 	
 		// assume we want something relative to local_path
 		path = sh->local_path;
 		processRelativePath(&path, &args[1]);
 		args[1] = path;
+		D("relative path: " << path );
 	}
 	
 	ifVerbose cout << "run: Running script '" << path << "'" << endl;
@@ -585,6 +613,7 @@ int sh_help(string *args, struct shell_state *sh)
 void setcliflags( short int flags )
 {
 	cli_flags = flags;
+	D("Set cli_flags: " << flags);
 }
 
 short int getcliflags()
