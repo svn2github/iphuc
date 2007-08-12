@@ -1,4 +1,4 @@
-#include "normalinterface.h"
+#include "NormalInterface.h"
 #include "Shell.h"
 
 int n_pwd(string *args, struct shell_state *sh)
