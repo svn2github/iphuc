@@ -7,13 +7,15 @@ using namespace std;
 COMMAND *cur;
 shell_state *rl_sh;
 
+short int cli_flags;
+string cli_script_path = "";
+
 char *dupstr( char *s )
 {
 	char *r = (char *)malloc(strlen(s)+1);
 	strcpy(r,s);
 	return(r);
 }
-
 
 char** cmd_completer(const char *text, int start, int end)
 {
@@ -34,7 +36,6 @@ char** cmd_completer(const char *text, int start, int end)
 	
 	return matches;
 }
-
 
 char* cmd_generator(const char *text, int state)
 {
@@ -397,6 +398,7 @@ int shell(struct shell_state *sh)
 	string prompt;
 	int retval;
 	
+	ifVerbose
 	cout << "shell: Entering loop." << endl;
 	
 	//initialize readline
@@ -412,11 +414,18 @@ int shell(struct shell_state *sh)
 		
 		if (line == (char *)NULL)
 		{
+			ifNotQuiet
+				cout << "shell: Readline error.  Probably memory allocation related." << endl;
 			return SHELL_TERMINATE;
+		} else if (line[0] != '\0') {
+			add_history(line);
+			retval = exec_line(line, sh);
+		} else {
+			//blank line == help
+			line = (char *)malloc(sizeof(char)*5);
+			strcpy(line, "help");
+			retval = exec_line(line, sh);
 		}
-		
-		add_history(line);
-		retval = exec_line(line, sh);
 		
 		switch( retval )
 		{
@@ -440,8 +449,9 @@ int shell(struct shell_state *sh)
 				
 			default:
 				free(line);
-				cout	<< "shell: Function returned unknown error: "
-					<< retval << endl;
+				ifNotQuiet
+					cout	<< "shell: Function returned unknown error: "
+						<< retval << endl;
 				return retval;
 		}
 		
@@ -482,5 +492,21 @@ int sh_help(string *args, struct shell_state *sh)
 	
 	return SHELL_CONTINUE;
 }
+
+void setcliflags( short int flags )
+{
+	cli_flags = flags;
+}
+
+short int getcliflags()
+{
+	return cli_flags;
+}
+
+void setscriptpath( char *path )
+{
+	cli_script_path = path;
+}
+
 
 /* -*- mode:c; indent-tabs-mode:nil; c-basic-offset:2; tab-width:2; */

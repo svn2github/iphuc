@@ -20,6 +20,8 @@ Copyright (C) 2007  iPhoneDev Team ( http://iphone.fiveforty.net/wiki/ )
 #ifndef SHELL_H
 #define SHELL_H
 
+#include <ctype.h>
+#include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -38,6 +40,18 @@ extern "C"
 
 #include "config.h"
 
+/* Defines for testing command line arguments passed to iphuc */
+// max number of command line options is limited to sizeof(short int)
+// which is always 2 bytes (16 bits)
+#define OPT_QUIET	1	//q quiet
+#define OPT_VERBOSE	2	//v verbose
+#define OPT_SCRIPT	4	//s script
+#define OPT_ONESHOT	8	//o oneshot
+#define OPT_AFCNAME	16	//a afcname
+
+#define ifNotQuiet		if( !(getcliflags() & OPT_QUIET))
+#define ifVerbose		if( !(getcliflags() & OPT_VERBOSE))
+
 /* Unix version of a hidden file.  Could be different on other systems. */
 #define HIDDEN_FILE(fname)	((fname)[0] == '.')
 
@@ -49,6 +63,7 @@ extern "C"
 #define savestring(x) strcpy ((char *)malloc (1 + strlen (x)), (x))
 #endif
 
+/* Shell defines */
 #define SHELL_UNKNOWN	-1
 #define SHELL_NORMAL	0
 #define	SHELL_RESTORE	1
@@ -122,6 +137,9 @@ void processRelativePath(string *basePath, string *cdPath);
 int shell(struct shell_state *sh);
 int sh_help(string *args, struct shell_state *sh);
 char *rl_remote_complete(const char *text, int state);
+void setcliflags( short int flags );
+short int getcliflags();
+void setscriptpath( char *path );
 
 #endif //SHELL_H
 

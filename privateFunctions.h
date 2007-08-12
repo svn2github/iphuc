@@ -26,6 +26,7 @@ Copyright (C) 2007  iPhoneDev Team ( http://iphone.fiveforty.net/wiki/ )
 #define PRIVATEFUNCTIONS_H
 
 //#include <string.h>
+#include "Shell.h"
 #include "MobileDevice.h"
 
 using namespace std;

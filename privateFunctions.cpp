@@ -19,10 +19,12 @@ static ricmdsend priv_socketForPort;
 
 int initPrivateFunctions() {
 
+	ifVerbose
 	cout << "this is still not clean.  Architecture: ";
 
-#if defined(WIN32) 
-	
+#if defined(WIN32)
+ 
+	ifVerbose
 	cout << "WIN32 ";
 	
 	//get sendCommandToDevice function pointer from dll
@@ -30,6 +32,7 @@ int initPrivateFunctions() {
 	hGetProcIDDLL = GetModuleHandle("iTunesMobileDevice.dll");
 	
 	if (!hGetProcIDDLL) {
+		ifNotQuiet
 		cout << "Could not find dll in memory" << endl;
 		return EXIT_FAILURE;
 	}
@@ -64,12 +67,14 @@ int initPrivateFunctions() {
     // 3c3a52dc t __sendFileToDevice
     // 3c3a0644 t __socketForPort
 #if defined(__POWERPC__)
+	ifVerbose
 	cout << "powerpc ";
 	priv_sendCommandToDevice = (cmdsend)(0x3c3a517c);
 	priv_sendFileToDevice = (cmdsend)(0x3c3a52dc);
 	priv_performOperation = (rcmdsend)(0x3c3a0e14);
 	priv_socketForPort = (ricmdsend)(0x3c3a0644);
 #else    
+	ifVerbose
 	cout << "i386 ";
 	priv_sendCommandToDevice = (cmdsend)(0x3c3a3e3b);
 	priv_sendFileToDevice = (cmdsend)(0x3c3a4087);
@@ -78,6 +83,7 @@ int initPrivateFunctions() {
 #endif
 
 #else
+	ifVerbose
 	cout << "NONE.  Platform not supported! " << endl;
 #endif
 	return EXIT_SUCCESS;
@@ -94,6 +100,7 @@ int sendCommandToDevice(am_recovery_device *rdev, CFStringRef cfs)
 #elif defined (__APPLE__)
 	retval = priv_sendCommandToDevice(rdev, cfs);
 #else
+	ifNotQuiet
 	cout << "sendCommandToDevice not implemented for your platform." << endl;
 #endif
     return retval;
@@ -110,6 +117,7 @@ int sendFileToDevice(am_recovery_device *rdev, CFStringRef filename)
 #elif defined (__APPLE__)
 	retval = priv_sendFileToDevice(rdev, filename);
 #else
+	ifNotQuiet
 	cout << "sendFileToDevice not implemented for your platform." << endl;
 #endif
 	return retval;
@@ -127,6 +135,7 @@ int performOperation(am_restore_device *rdev, CFMutableDictionaryRef message)
 #elif defined (__APPLE__)
 	retval = priv_performOperation(rdev, message);
 #else
+	ifNotQuiet
 	cout << "performOperation not implemented for your platform." << endl;
 #endif
 	return retval;
