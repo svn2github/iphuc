@@ -1,4 +1,4 @@
-iPHoneUtilityClient v0.5
+iPHoneUtilityClient
 ========================
 
 An AFC client meant to interface with the iPhone.
@@ -19,8 +19,21 @@ As os x readline does not provide certain features we require, please install ma
 4)	Execute iPHUC by typing
 	./iPHUC
 
+USAGE:
+======
 
-Soon we will include a script that will automate jailbreak, ssh installation, etc... just hold tight.
+iphuc accepts 6 command line options:
+
+-q				Quiet.  Repress most output.
+-v				Verbose.  Emit as much information as possible.
+-d				Debug.  Emits the maximum amount of information.
+-s [path]		Script.  Run script at [path] and then exit.
+-o [command]	Oneshot.  Run [command], and then exit.
+-a [name]		Afcname.  Connect to afc service [name] at startup.
+
+To display as little output as possible, set -q.  To display all possible output, set -vd.
+
+Soon we will include a script that will automatically jailbreak and install a package manager.
 
 Known Issues:
 If you attempt to putfile a file with size of zero, it messes up the AFC connection.  Restart iPHUC

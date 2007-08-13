@@ -18,13 +18,17 @@ int n_setafc(string *args, struct shell_state *sh)
 	
 	if( args[1] == "" )
 	{
-		cout << "setafc: please provide a service name.";
+		ifNotQuiet cout << "setafc: please provide a service name.";
 	} else {
 		if (sh->shell_mode == SHELL_NORMAL)
+		{
+			D("closing existing AFC connection");
 			AFCConnectionClose(sh->conn);
+		}
+			
 		
 		// Start AFC service
-		
+		D("trying AMDeviceStartService");
 		signed int retval = AMDeviceStartService(sh->dev,
 			CFStringCreateWithCString(NULL, args[1].c_str(), kCFStringEncodingASCII),
 			&(sh->afch), NULL);
@@ -38,10 +42,10 @@ int n_setafc(string *args, struct shell_state *sh)
 					&(sh->afch), NULL);
 		}
 		
-		ifNotQuiet cout	<< "AMDeviceStartService AFC: " << retval << endl;
+		ifVerbose cout	<< "AMDeviceStartService AFC: " << retval << endl;
 			
 		// Open an AFC Connection
-		ifNotQuiet cout	<< "AFCConnectionOpen: "
+		ifVerbose cout	<< "AFCConnectionOpen: "
 				<< AFCConnectionOpen(sh->afch, 0, &(sh->conn))
 				<< endl;
 	}
@@ -411,7 +415,7 @@ int n_getfile(string *args, struct shell_state *sh)
 	}
 	
 	D("getting remote file: "<< args[1]);
-	D("getting local file"<< args[2]);
+	D("putting at local path: "<< args[2]);
 	get_file(sh, (char *)args[2].c_str(), (char *)args[1].c_str());
 	
 	return SHELL_CONTINUE;
@@ -423,7 +427,7 @@ int n_putfile(string *args, struct shell_state *sh)
 	
 	if( args[1] == "" )
 	{
-		cout	<< "putfile: please specify a file to send" << endl;
+		ifNotQuiet cout	<< "putfile: please specify a file to send" << endl;
 		return SHELL_CONTINUE;
 	} else if ( args[1].at(0) == '/' ) {
 	
@@ -458,7 +462,6 @@ int n_putfile(string *args, struct shell_state *sh)
 	
 	// check to see if args[2] is a directory.  If it is, should append the file
 	// name from args[1] to the end of args[2]
-	
 	struct afc_directory *tempdir = (afc_directory *)NULL;
 	AFCDirectoryOpen(sh->conn, (char*)args[2].c_str() , &tempdir);
 	if( tempdir )
@@ -469,6 +472,8 @@ int n_putfile(string *args, struct shell_state *sh)
 		AFCDirectoryClose(0, tempdir);
 	}
 	
+	D("putting local file: "<< args[1]);
+	D("at remote path: "<< args[2]);
 	put_file(sh, (char *)args[1].c_str(), (char *)args[2].c_str() );
 	
 	return SHELL_CONTINUE;
@@ -483,7 +488,7 @@ int n_fileinfo(string *args, struct shell_state *sh)
 	
 	if( args[1] == "" )
 	{
-		cout << "fileinfo: please provide a file to get info on." << endl;
+		ifNotQuiet cout << "fileinfo: please provide a file to get info on." << endl;
 		return SHELL_CONTINUE;
 	} else if (args[1].at(0) != '/') {
 		path = sh->remote_path;
@@ -492,10 +497,12 @@ int n_fileinfo(string *args, struct shell_state *sh)
 		path = sh->remote_path;
 	}
 	
+	D("getting info on remote file: "<< path);
+	
 	ret = AFCFileInfoOpen(sh->conn, (char *)path.c_str(), &info);
 	if(ret)
 	{
-		cout << "AFCFileInfo: cannot open file '" << path << "': " << ret << endl;
+		ifNotQuiet cout << "AFCFileInfo: cannot open file '" << path << "': " << ret << endl;
 		return SHELL_CONTINUE;
 	}
 	
@@ -529,14 +536,16 @@ void put_file(struct shell_state *sh, char *local_path, char *remote_path)
 	std::string remotePathStr;
 	afc_error_t ret;
 	
-	cout << "putfile: Opening local file '" << local_path << "'" << endl;
+	ifVerbose cout << "putfile: Opening local file '" << local_path << "'" << endl;
 	
 	f = fopen(local_path, "rb");
 	if (!f) {
-		cout << "putfile: Failed to open local file '" << local_path << "'" << endl;
+		ifNotQuiet cout << "putfile: Failed to open local file '" << local_path << "'" << endl;
 		return;
 	}
-
+	
+	D("local file open.");
+	
 	// If remote_path isn't set, use cp semantics
 	if(remote_path == NULL)
 	{
@@ -545,7 +554,7 @@ void put_file(struct shell_state *sh, char *local_path, char *remote_path)
 		string local = local_path;
 		if(local[local.length() - 1] == '/')
 		{
-			cout << "putfile: Writing directories is currently unsupported" << endl;
+			ifNotQuiet cout << "putfile: Writing directories is currently unsupported" << endl;
 			return;
 		}
 
@@ -562,16 +571,19 @@ void put_file(struct shell_state *sh, char *local_path, char *remote_path)
 		remotePathStr = remote_path;
 	}
 	
+	D("remote path: "<<remote_path);
 	remote_path = (char *) remotePathStr.c_str();
-
+	
 	size = fstat(fileno(f), &sb);
+	D("local fileno: "<< fileno(f));
+	
 	
 	// AFCFileRefWrite: Writing to remote file
 	// putfile: Failed to write to remote file: 11
 	// is usually caused by trying to write a file with size 0
 	if( sb.st_size == 0 )
 	{
-		cout << "putfile: Cannot write file with size " << sb.st_size << endl;
+		ifNotQuiet cout << "putfile: Cannot write file with size " << sb.st_size << endl;
 		return;
 	}
 	
@@ -579,52 +591,59 @@ void put_file(struct shell_state *sh, char *local_path, char *remote_path)
 	
 	if(!buf)
 	{
-		cout << "putfile: Could not allocate buffer.  Aborting." << endl;
+		ifNotQuiet cout << "putfile: Could not allocate buffer.  Aborting." << endl;
 		return;
 	}
 	
+	D("reading file into buffer.");
 	fread(buf, sb.st_size, 1, f);
+	D("closing file.");
 	fclose(f);
 	
-	cout << "AFCFileRefOpen: opening remote file '" << remote_path << "'" << endl;
+	ifVerbose cout << "AFCFileRefOpen: opening remote file '" << remote_path << "'" << endl;
 	ret = AFCFileRefOpen(sh->conn, remote_path, 3, &ref);
 	
 	if (ret) {
-		cout << "putfile: Failed to open remote file: " << ret << endl;
+		ifNotQuiet cout << "putfile: Failed to open remote file: " << ret << endl;
 		return;
 	}
 	
-	cout << "AFCFileRefWrite: Writing to remote file" << endl;
+	ifVerbose cout << "AFCFileRefWrite: Writing to remote file" << endl;
 	ret = AFCFileRefWrite(sh->conn, ref, buf, sb.st_size);
 	
 	if (ret) {
-		cout << "putfile: Failed to write to remote file: " << ret << endl;
+		ifNotQuiet cout << "putfile: Failed to write to remote file: " << ret << endl;
 		return;
 	}
 	
-	cout << "AFCFileRefClose: Closing remote file. " << endl;
+	ifVerbose cout << "AFCFileRefClose: Closing remote file. " << endl;
 	ret = AFCFileRefClose(sh->conn, ref);
 	
 	if (ret) {
-		cout << "putfile: Failed to close remote file: " << ret << endl;
+		ifNotQuiet cout << "putfile: Failed to close remote file: " << ret << endl;
 		return;
 	}
-
+	
+	D("freeing file buffer.");
 	free(buf);
 
-	cout << "putfile: Transfer successful" << endl;
+	ifVerbose cout << "putfile: Transfer successful" << endl;
 }
 
 unsigned int get_file_size(struct afc_connection *conn, char *path)
 {
 	char *key, *val;
 	unsigned int size;
+	mach_error_t ret;
 	struct afc_dictionary *info;
-
-	if (AFCFileInfoOpen(conn, path, &info))
+	
+	ret = AFCFileInfoOpen(conn, path, &info);
+	if (ret)
 	{
-		cout << "AFCFileInfoOpen: could not open file '" << path << "'" << endl;
+		ifNotQuiet cout << "AFCFileInfoOpen: could not open file '" << path << "'" << endl;
 		return 0;
+	} else {
+		ifVerbose cout << "AFCFileInfoOpen: " << ret << endl;
 	}
 	
 	while (1) {
@@ -638,9 +657,10 @@ unsigned int get_file_size(struct afc_connection *conn, char *path)
 			return size;
 		}
 	}
-
+	
+	D("AFCKeyValueClose");
 	AFCKeyValueClose(info);
-
+	
 	return 0;
 }
 
@@ -655,57 +675,57 @@ void get_file(struct shell_state *sh, char *local_path, char *remote_path)
 	// here we assume we are being passed absolute paths 
 	// in both remote and local paths
 	
-	cout	<< "AFCFileRefOpen: opening remote path '"
-		<< remote_path << "'" << endl;
-	
+	ifVerbose cout	<< "AFCFileRefOpen: opening remote path '" << remote_path << "'" << endl;
 	ret = AFCFileRefOpen(sh->conn, remote_path, 1, &ref);
-	
 	if (ret)
 	{
-		cout << "getfile: Failed to open remote file: " << ret << endl;
+		ifNotQuiet cout << "getfile: Failed to open remote file: " << ret << endl;
 		return;
 	}
 	
 	remote_file_size = get_file_size(sh->conn, remote_path); 
 
-	cout	<< "AFCFileRefRead: reading " << remote_file_size
-		<< " bytes into buffer" << endl;
+	ifVerbose cout	<< "AFCFileRefRead: reading " << remote_file_size
+			<< " bytes into buffer" << endl;
 	
 	buf = (unsigned char *)malloc(remote_file_size);
 
 	if (!buf)
 	{
-		cout << "getfile: could not allocate buffer. Aborting." << endl;
+		ifNotQuiet cout << "getfile: could not allocate buffer. Aborting." << endl;
 		return;
 	}
 	
+	D("AFCFileRead");
 	ret = AFCFileRefRead(sh->conn, ref, buf, &remote_file_size);
-	
 	if (ret) {
-		cout << "getfile: Failed to read from remote file: " << ret << endl;
+		ifNotQuiet cout << "getfile: Failed to read from remote file: " << ret << endl;
 		return;
 	}
 	
 	ret = AFCFileRefClose(sh->conn, ref);
-	
 	if (ret) {
-		cout << "getfile: Failed to close remote file: " << ret << endl;
+		ifNotQuiet cout << "getfile: Failed to close remote file: " << ret << endl;
 		return;
 	}
-
+	
+	D("Opening local_path: "<<local_path);
 	f = fopen(local_path, "w+b");
 	if (f == NULL) {
-		cout << "getfile: Failed to open local file '" << local_path << "'" << endl;;
+		ifNotQuiet cout << "getfile: Failed to open local file '" << local_path << "'" << endl;;
 		return;
 	}
 	
-	cout << "getfile: Writing file to local path '" << local_path << "'" << endl;
+	ifVerbose cout << "getfile: Writing file to local path '" << local_path << "'" << endl;
 	
+	D("writing local file.");
 	fwrite(buf, remote_file_size, 1, f);
+	D("closing local file.");
 	fclose(f);
+	D("freeing file buffer.");
 	free(buf);
 
-	cout << "getfile: Transfer successful." << endl;
+	ifVerbose cout << "getfile: Transfer successful." << endl;
 }
 
 /* -*- mode:c; indent-tabs-mode:nil; c-basic-offset:2; tab-width:2; */

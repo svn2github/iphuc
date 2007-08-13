@@ -9,6 +9,13 @@ shell_state *rl_sh;
 
 short int cli_flags;
 string cli_script_path = "";
+short int remote_function_retval = 0;
+
+void set_rfr(short int val)
+{
+	D("remote function retval set to: "<< val);
+	remote_function_retval = val;
+}
 
 char *dupstr( char *s )
 {
@@ -421,6 +428,12 @@ int run_script(string *path, struct shell_state *sh)
 		ifVerbose cout << command << endl;
 		retval = exec_line((char *)command.c_str(), sh);
 		
+		if( remote_function_retval )
+		{
+			ifNotQuiet cout << "Function returned a non-zero value. Halting script." << endl;
+			return SHELL_CONTINUE;
+		}
+		
 		switch( retval )
 		{
 			case SHELL_CONTINUE:
@@ -548,8 +561,6 @@ int sh_run( string *args, struct shell_state *sh)
 {
 	string path;
 	int retval;
-	
-	
 	
 	if( args[1] == "" )
 	{

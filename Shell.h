@@ -154,6 +154,7 @@ char *rl_remote_complete(const char *text, int state);
 void setcliflags( short int flags );
 short int getcliflags();
 void setscriptpath( char *path );
+void set_rfr(short int val);
 
 #endif //SHELL_H
 
