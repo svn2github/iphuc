@@ -139,10 +139,18 @@ void notification(struct am_device_notification_callback_info *info)
 		ifNotQuiet cout << "notification: iPhone attached." << endl;
 	
 		retval = AMDeviceConnect(dev);	
-		ifVerbose cout << "AMDeviceConnect: " << retval << endl;
 		
 		if (retval)
 		{
+			
+			if( (getcliflags() & OPT_NORMAL) )
+			{
+				D("Found restore, but waiting for normal.");
+				return;
+			}
+			
+			ifVerbose cout << "AMDeviceConnect: " << retval << endl;
+			
 			// Check for restore mode
 			ifNotQuiet
 			{
@@ -172,10 +180,19 @@ void notification(struct am_device_notification_callback_info *info)
 			delete sh;
 
 		} else {
+			
+			if( (getcliflags() & OPT_RESTORE) )
+			{
+				D("Found normal, but waiting for restore.");
+				return;
+			}
+			
 			mach_error_t ret;
 			struct shell_state *sh = new shell_state();
 			sh->dev = dev;
-		
+			
+			ifVerbose cout << "AMDeviceConnect: " << retval << endl;
+			
 			// Enter normal mode
 			ret = AMDeviceIsPaired(sh->dev);
 			ifVerbose cout << "AMDeviceIsPaired: " << ret << endl;
@@ -211,9 +228,21 @@ void notification(struct am_device_notification_callback_info *info)
 			// build the rest of shell_state
 			sh->shell_mode = SHELL_NORMAL;
 			sh->command_array = normal_shell;
-		
+			
+			// get current working directory
+			char *buf = (char *)malloc(sizeof(char)*1024);
+			if( !buf || !(getcwd(buf, 1024)) )
+			{
+				D("either cwd too long, or out of memory.");
+				if(buf) free(buf);
+				sh->local_path = "/";
+			} else {
+				sh->local_path = buf;
+				if(buf) free(buf);
+				D("set lpwd: "<< sh->local_path );
+			}
+			
 			sh->remote_path = "/";
-			sh->local_path = "/";
 			sh->prompt_string = "(iPHUC) ";
 		
 			//enter shell		
@@ -263,7 +292,7 @@ int main(int argc, char **argv)
 	short int cli_flags = 0;
 	mach_error_t retval;
 	
-	while ((c = getopt (argc, argv, "qvs:o:a:d")) != -1 )
+	while ((c = getopt (argc, argv, "qvs:o:a:drne")) != -1 )
 	{
 		switch (c)
 		{
@@ -277,22 +306,37 @@ int main(int argc, char **argv)
 			break;
 		case 's':
 			cli_flags = cli_flags | OPT_SCRIPT;
+			D("Script flag set");
 			setscriptpath( optarg );
 			break;
 		case 'o':
 			cli_flags = cli_flags | OPT_ONESHOT;
+			D("Oneshot flag set");
 			if ( !(cli_flags & OPT_SCRIPT) )
 				setscriptpath( optarg );
+			else
+				ifNotQuiet cout << "iphuc: Oneshot flag incompatible with script flag." << endl;
 			break;
 		case 'a':
 			cli_flags = cli_flags | OPT_AFCNAME;
-			D("Afcname flag set.");
+			D("Afcname flag set: " << optarg);
 			cli_afc_name = CFStringCreateWithCString(NULL, optarg, kCFStringEncodingASCII);
-			D(optarg);
 			break;
 		case 'd':
 			cli_flags = cli_flags | OPT_DEBUG;
 			D("Debug flag set.");
+			break;
+		case 'r':
+			cli_flags = cli_flags | OPT_RECOVERY;
+			D("WaitForRecovery flag set.");
+			break;
+		case 'n':
+			cli_flags = cli_flags | OPT_NORMAL;
+			D("WaitForNormal flag set.");
+			break;		
+		case 'e':
+			cli_flags = cli_flags | OPT_RESTORE;
+			D("WaitForRestore flag set.");
 			break;
 		case '?':
 			cout << "getopt: unknown option." << endl;
@@ -304,7 +348,7 @@ int main(int argc, char **argv)
 	}
 	
 	setcliflags( cli_flags );
-		
+	
 	// default afc "com.apple.afc"
 	if( !cli_afc_name )
 	{
@@ -320,39 +364,46 @@ int main(int argc, char **argv)
 #endif
 	
 	ifNotQuiet cout << ">> By The iPhoneDev Team: " << AUTHOR_NICK_STRING << endl;
-	
 	D("debug mode on.");
 	
 	//Call to SERIOUS_HACKERY
-	ifVerbose cout << "initPrivateFunctions: ";
-	
-	initPrivateFunctions();
-	
-	ifVerbose cout << endl;
+	ifVerbose cout << "initPrivateFunctions: "; initPrivateFunctions(); ifVerbose cout << endl;
 	//End SERIOUS_HACKERY
 	
-	retval = AMDeviceNotificationSubscribe(notification, 0, 0, 0, &notif);
+	if( (cli_flags & OPT_RECOVERY) )
+	{
+		D("skipping AMDeviceNotificationSubscribe");
+		ifVerbose cout << "iphuc: Waiting for recovery mode callback." << endl;	
+	} else {
+		retval = AMDeviceNotificationSubscribe(notification, 0, 0, 0, &notif);
 	
-	ifVerbose cout	<< "AMDeviceNotificationSubscribe: "
-			<< retval
-			<< endl;
+		ifVerbose cout	<< "AMDeviceNotificationSubscribe: "
+				<< retval
+				<< endl;
+	}
 	
-	unsigned int ret = AMRestoreRegisterForDeviceNotifications(
-					dfu_connect_callback,
-					recovery_connect_callback,
-					dfu_disconnect_callback,
-					recovery_disconnect_callback,
-					0,
-					NULL);
+	if( !(cli_flags & OPT_RECOVERY) )
+	{
+		unsigned int ret = AMRestoreRegisterForDeviceNotifications(
+						dfu_connect_callback,
+						recovery_connect_callback,
+						dfu_disconnect_callback,
+						recovery_disconnect_callback,
+						0,
+						NULL);
 					
 	
-	ifVerbose cout	<< "AMRestoreRegisterForDeviceNotifications: "
-			<< retval << endl;
-	
-	if (ret != 0)
-	{
-		ifNotQuiet cout << "Problem registering recovery callback.  Exiting." << endl;
-		return EXIT_FAILURE;
+		ifVerbose cout	<< "AMRestoreRegisterForDeviceNotifications: "
+				<< retval << endl;
+
+		if (ret != 0)
+		{
+			ifNotQuiet cout << "Problem registering notification callback.  Exiting." << endl;
+			return EXIT_FAILURE;
+		}
+	} else {
+		D("skipping AMRestoreRegisterForDeviceNotifications");
+		ifVerbose cout << "iphuc: Waiting for Normal or Restore mode." << endl;
 	}
 	
 	ifNotQuiet cout << "CFRunLoop: Waiting for iPhone." << endl;
@@ -365,10 +416,10 @@ int main(int argc, char **argv)
 	while (run) {
 		Sleep(1);
 	}
-	return 0;
+	return 1;
 #endif
 
-	
+	return 1;
 }
 
 /* -*- mode:c; indent-tabs-mode:nil; c-basic-offset:2; tab-width:2; */

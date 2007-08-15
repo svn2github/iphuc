@@ -15,23 +15,19 @@ int n_lpwd(string *args, struct shell_state *sh)
 
 int n_setafc(string *args, struct shell_state *sh)
 {
+	mach_error_t retval;
 	
 	if( args[1] == "" )
 	{
-		ifNotQuiet cout << "setafc: please provide a service name.";
+		ifNotQuiet cout << "setafc: please provide a service name." << endl;
 	} else {
-		if (sh->shell_mode == SHELL_NORMAL)
-		{
-			D("closing existing AFC connection");
-			AFCConnectionClose(sh->conn);
-		}
 			
-		
 		// Start AFC service
 		D("trying AMDeviceStartService");
-		signed int retval = AMDeviceStartService(sh->dev,
-			CFStringCreateWithCString(NULL, args[1].c_str(), kCFStringEncodingASCII),
-			&(sh->afch), NULL);
+		
+		retval =	AMDeviceStartService(sh->dev,
+				CFStringCreateWithCString(NULL, args[1].c_str(), kCFStringEncodingASCII),
+				&(sh->afch), NULL);
 		
 		if( retval )
 		{
@@ -40,14 +36,21 @@ int n_setafc(string *args, struct shell_state *sh)
 			retval = 	AMDeviceStartService(sh->dev,
 					CFStringCreateWithCString(NULL, args[1].c_str(), kCFStringEncodingASCII),
 					&(sh->afch), NULL);
+			
+			if( retval )
+			{
+				ifNotQuiet cout << "setafc: second attempt returned " << retval << endl;
+				ifNotQuiet cout << "iphuc: please relaunch and try again." << endl;
+				return SHELL_TERMINATE;
+			}
 		}
 		
 		ifVerbose cout	<< "AMDeviceStartService AFC: " << retval << endl;
 			
 		// Open an AFC Connection
-		ifVerbose cout	<< "AFCConnectionOpen: "
-				<< AFCConnectionOpen(sh->afch, 0, &(sh->conn))
-				<< endl;
+		retval = AFCConnectionOpen(sh->afch, 0, &(sh->conn));
+		
+		ifVerbose cout	<< "AFCConnectionOpen: " << retval << endl;
 	}
 		
 	return SHELL_CONTINUE;

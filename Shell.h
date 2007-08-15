@@ -55,6 +55,9 @@ extern "C"
 #define OPT_ONESHOT	8	//o oneshot
 #define OPT_AFCNAME	16	//a afcname
 #define OPT_DEBUG	32	//d debug
+#define OPT_RECOVERY	64	//r wait for recovery mode
+#define OPT_NORMAL	128	//n wait for normal mode
+#define OPT_RESTORE	256	//e wait for restore mode (probably shouldn't use)
 
 #define ifNotQuiet		if( !(getcliflags() & OPT_QUIET) )
 #define ifVerbose		if( getcliflags() & OPT_VERBOSE )
