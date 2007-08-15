@@ -328,6 +328,7 @@ int main(int argc, char **argv)
 			break;
 		case 'r':
 			cli_flags = cli_flags | OPT_RECOVERY;
+			cout << "BAH" << endl;
 			D("WaitForRecovery flag set.");
 			break;
 		case 'n':
@@ -382,8 +383,12 @@ int main(int argc, char **argv)
 				<< endl;
 	}
 	
-	if( !(cli_flags & OPT_RECOVERY) )
+	if( (cli_flags & OPT_NORMAL) || (cli_flags & OPT_RESTORE) )
 	{
+		D("skipping AMRestoreRegisterForDeviceNotifications");
+		ifVerbose cout << "iphuc: Waiting for Normal or Restore mode." << endl;
+	} else {
+		
 		unsigned int ret = AMRestoreRegisterForDeviceNotifications(
 						dfu_connect_callback,
 						recovery_connect_callback,
@@ -394,16 +399,14 @@ int main(int argc, char **argv)
 					
 	
 		ifVerbose cout	<< "AMRestoreRegisterForDeviceNotifications: "
-				<< retval << endl;
+				<< ret << endl;
 
 		if (ret != 0)
 		{
 			ifNotQuiet cout << "Problem registering notification callback.  Exiting." << endl;
 			return EXIT_FAILURE;
 		}
-	} else {
-		D("skipping AMRestoreRegisterForDeviceNotifications");
-		ifVerbose cout << "iphuc: Waiting for Normal or Restore mode." << endl;
+	
 	}
 	
 	ifNotQuiet cout << "CFRunLoop: Waiting for iPhone." << endl;
