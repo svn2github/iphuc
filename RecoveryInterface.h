@@ -30,6 +30,7 @@ int recovery_filecopytophone(string *args, struct shell_state *sh);
 int recovery_serial(string *args, struct shell_state *sh);
 int recovery_cmd(string *args, struct shell_state *sh);
 int recovery_disconnect(string *args, struct shell_state *sh);
+int recovery_exit(string *args, struct shell_state *sh);
 
 #endif // RECOVERYINTERFACE_H
 

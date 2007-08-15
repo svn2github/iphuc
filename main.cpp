@@ -63,7 +63,8 @@ COMMAND recovery_shell[] =
 	{ "filecopytophone",	recovery_filecopytophone,	">> filecopytophone"},
 	{ "serial",		recovery_serial,		">> serial"},
 	{ "cmd",		recovery_cmd,			">> cmd <command> - send command to phone."},
-	{ "exit",         	n_exit,          		">> exit - Escape to shell.  The other shell, the one whos child i am." },	
+	{ "exit",         	recovery_exit,          		">> exit - Escape to shell.  The other shell, the one whos child i am." },
+	{ "disconnect",         	recovery_disconnect,          		">> disconnect - disconnect from shell and await reconnect." },		
 	{ "help",		sh_help,			">> help <command> - Display help information on <command>.  No args lists commands." },
 	{ "run",		sh_run,				">> run <path> - runs a script at <path>."},
 	{ (char *)NULL, (shell_funct *)NULL, (char *)NULL }
@@ -328,7 +329,6 @@ int main(int argc, char **argv)
 			break;
 		case 'r':
 			cli_flags = cli_flags | OPT_RECOVERY;
-			cout << "BAH" << endl;
 			D("WaitForRecovery flag set.");
 			break;
 		case 'n':

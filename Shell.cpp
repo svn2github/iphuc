@@ -500,7 +500,9 @@ int shell(struct shell_state *sh)
 	if ( cli_flags & OPT_ONESHOT )
 	{
 		D("oneshot: " << cli_script_path);
-		return exec_line((char *)cli_script_path.c_str(), sh);
+		int ret = exec_line((char *)cli_script_path.c_str(), sh);
+		D("command exited: "<< ret);
+		exit(ret);
 	}
 	
 	while (1) {

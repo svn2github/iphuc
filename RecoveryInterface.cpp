@@ -153,6 +153,12 @@ int recovery_cmd(string *args, struct shell_state *sh)
 	return SHELL_CONTINUE;
 }
 
+int recovery_exit(string *args, struct shell_state *sh)
+{
+	D("exiting iphuc");
+	exit(0);
+}
+
 int recovery_disconnect(string *args, struct shell_state *sh)
 {
 	return SHELL_WAIT;
