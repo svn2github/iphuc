@@ -38,6 +38,7 @@ extern "C"
 #include "MobileDevice.h"
 #include "NormalInterface.h"
 #include "RecoveryInterface.h"
+#include "DFUInterface.h"
 #include "RestoreInterface.h"
 #include "privateFunctions.h"
 
@@ -84,6 +85,7 @@ extern "C"
 #define SHELL_NORMAL	0
 #define	SHELL_RESTORE	1
 #define SHELL_RECOVERY	2
+#define SHELL_DFU		3
 
 #define MAX_ARGUMENTS	5
 

@@ -70,16 +70,59 @@ COMMAND recovery_shell[] =
 	{ (char *)NULL, (shell_funct *)NULL, (char *)NULL }
 };
 
-void dfu_connect_callback(am_recovery_device *rdev) {
-	cout << "Detected a DFU connection: How did you do this?" << endl;
-	cout << "Please Report." << endl;
-	cout << flush;
+COMMAND dfu_shell[] =
+{
+	{ "restore",		dfu_restore,		">> restore - enter restore mode. "},
+	{ "grestore",		dfu_grestore,		">> grestore <restorebundle> - enter restore mode interactively."},
+	{ "filecopytophone",	dfu_filecopytophone,	">> filecopytophone"},
+	{ "serial",		dfu_serial,		">> serial"},
+	{ "cmd",		dfu_cmd,			">> cmd <command> - send command to phone."},
+	{ "exit",         	dfu_exit,          		">> exit - Escape to shell.  The other shell, the one whos child i am." },
+	{ "disconnect",         	dfu_disconnect,          		">> disconnect - disconnect from shell and await reconnect." },		
+	{ "help",		sh_help,			">> help <command> - Display help information on <command>.  No args lists commands." },
+	{ "run",		sh_run,				">> run <path> - runs a script at <path>."},
+	{ (char *)NULL, (shell_funct *)NULL, (char *)NULL }
+};
+
+void dfu_connect_callback(am_recovery_device *rdev)
+{
+	
+	ifNotQuiet
+		cout << "DFU callback: Connected in DFU Mode" << endl;
+	
+	struct shell_state *sh = new shell_state();
+	sh->dev = NULL;
+	sh->restore_dev = NULL;
+	sh->recovery_dev = rdev;
+	sh->shell_mode = SHELL_DFU;
+	sh->command_array = dfu_shell;
+	sh->remote_path = "#";
+	sh->local_path = "#";
+	sh->prompt_string = "(iPHUC DFU) ";
+	
+	//enter shell		
+	ifNotQuiet
+		cout << "DFU callback: Entering shell in DFU Mode." << endl;
+	int ret = shell(sh);
+	ifNotQuiet
+		cout << "DFU callback: shell returned: " << ret << endl;
+	delete sh;
+	
+	switch(ret)
+	{
+		case SHELL_TERMINATE:
+			ifNotQuiet cout << ">> Nothing left to do. Exiting." << endl;
+			exit(0);
+		default:
+			ifVerbose cout << "dfu_connect_callback: Leaving." << endl;
+			break;
+	}
 }
 
-void dfu_disconnect_callback(am_recovery_device *rdev) {
-	cout << "Detected a DFU disconnection: How did you do this?" << endl;
-	cout << "Please Report." << endl;
-	cout << flush;
+void dfu_disconnect_callback(am_recovery_device *rdev)
+{
+	ifNotQuiet
+	cout << endl << ">> DFU Mode Disconnect." << endl;
 }
 
 void recovery_connect_callback(am_recovery_device *rdev)
