@@ -23,7 +23,7 @@ Copyright (C) 2007  iPhoneDev Team ( http://iphone.fiveforty.net/wiki/ )
 #include "Shell.h"
 #include "MobileDevice.h"
 
-void recovery_progress_callback();
+void recovery_progress_callback(unsigned int progress_number, unsigned int opcode);
 int recovery_restore(string *args, struct shell_state *sh);
 int recovery_grestore(string *args, struct shell_state *sh);
 int recovery_filecopytophone(string *args, struct shell_state *sh);

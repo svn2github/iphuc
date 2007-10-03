@@ -68,34 +68,34 @@ int initPrivateFunctions() {
 	ifVerbose cout << "powerpc ";
 
 	// For iTunes 7.3
+	/*
 	priv_sendCommandToDevice = (cmdsend)(0x3c3a517c);
 	priv_sendFileToDevice = (cmdsend)(0x3c3a52dc);
 	priv_performOperation = (rcmdsend)(0x3c3a0e14);
 	priv_socketForPort = (ricmdsend)(0x3c3a0644);
+	 */
 
 	// For iTunes 7.4
-	/*
 	priv_sendCommandToDevice = (cmdsend)(0x3c3a5bb0);
 	priv_sendFileToDevice = (cmdsend)(0x3c3a5d10);
 	priv_performOperation = (rcmdsend)(0x3c3a0bc8);
 	priv_socketForPort = (ricmdsend)(0x3c3a051c);
-	 */
 #else    
 	ifVerbose cout << "i386 ";
 
 	// For iTunes 7.3
+	/*
 	priv_sendCommandToDevice = (cmdsend)(0x3c3a3e3b);
 	priv_sendFileToDevice = (cmdsend)(0x3c3a4087);
 	priv_performOperation = (rcmdsend)(0x3c39fa4b);
 	priv_socketForPort = (ricmdsend)(0x3c39f36c);
+	 */
 
 	// For iTunes 7.4
-	/*
 	priv_sendCommandToDevice = (cmdsend)(0x3c3a597f);
 	priv_sendFileToDevice = (cmdsend)(0x3c3a5bcb);
 	priv_performOperation = (rcmdsend)(0x3c3a0599);
 	priv_socketForPort = (ricmdsend)(0x3c39ffa3);
-	 */
 #endif
 
 #else

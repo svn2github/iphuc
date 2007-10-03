@@ -73,10 +73,6 @@ COMMAND recovery_shell[] =
 COMMAND dfu_shell[] =
 {
 	{ "restore",		dfu_restore,		">> restore - enter restore mode. "},
-	{ "grestore",		dfu_grestore,		">> grestore <restorebundle> - enter restore mode interactively."},
-	{ "filecopytophone",	dfu_filecopytophone,	">> filecopytophone"},
-	{ "serial",		dfu_serial,		">> serial"},
-	{ "cmd",		dfu_cmd,			">> cmd <command> - send command to phone."},
 	{ "exit",         	dfu_exit,          		">> exit - Escape to shell.  The other shell, the one whos child i am." },
 	{ "disconnect",         	dfu_disconnect,          		">> disconnect - disconnect from shell and await reconnect." },		
 	{ "help",		sh_help,			">> help <command> - Display help information on <command>.  No args lists commands." },

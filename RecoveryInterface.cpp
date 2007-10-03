@@ -1,8 +1,15 @@
 #include "RecoveryInterface.h"
 
-void recovery_progress_callback()
+static am_recovery_device *g_recoveryDevice;
+
+void recovery_progress_callback(unsigned int progress_number, unsigned int opcode)
 {
 	fprintf(stderr, "Recovery progress callback...\n");
+
+	if (opcode == 9) {
+		sendCommandToDevice(g_recoveryDevice, CFSTR("setenv boot-args rd=md0 -v"));
+	}
+
 }
 
 int recovery_restore(string *args, struct shell_state *sh)
@@ -20,13 +27,17 @@ int recovery_restore(string *args, struct shell_state *sh)
 	CFMutableDictionaryRef opts;
 	D("Getting AMRestoreCreateDefaultOptions");
 	opts = AMRestoreCreateDefaultOptions(kCFAllocatorDefault);
-	CFDictionarySetValue(opts, CFSTR("RestoreBundlePath"), args[1].c_str() );
-        
+	CFStringRef value = CFStringCreateWithCString(kCFAllocatorDefault, args[1].c_str(),
+												  kCFStringEncodingMacRoman);
+	CFDictionarySetValue(opts, CFSTR("RestoreBundlePath"), value );
+	
 	//    describe255(opts);
-        
+
+	g_recoveryDevice = sh->recovery_dev;
 	ret = AMRestorePerformRecoveryModeRestore(	sh->recovery_dev, opts,
 							(void *)recovery_progress_callback, NULL );
-	
+
+	CFRelease(value);
 	ifVerbose cout 	<< "AMRestorePerformRecoveryModeRestore: " << ret << endl;
 	
 	return SHELL_CONTINUE;
@@ -45,14 +56,26 @@ int recovery_grestore(string *args, struct shell_state *sh)
 	// check for trailing /
 	if ( args[1].at(args[1].length() - 1) != '/' )
 		args[1] = args[1] + '/';
-	
-	string temp = args[1] + "694-5259-38.dmg";
-	
+
+	// firmware 1.0
+	// string temp = args[1] + "694-5259-38.dmg";
+
+	// firmware 1.0.1
+	// string temp = args[1] + "009-7662-6.dmg";
+
+	// firmware 1.0.2
+	string temp = args[1] + "009-7698-4.dmg";
+
+	// firmware 1.1.1?
+	// string temp = args[1] + "022-3629-9.dmg";
+
 	ifNotQuiet cout << "Entering G-Restore ... " << endl;
 	
 	// Send ramdisk to the phone
 	ifVerbose cout << "Sending ramdisk '"<< temp << "'" << endl;
-	ret = sendFileToDevice(sh->recovery_dev, CFStringCreateWithCString(NULL, temp.c_str(), kCFStringEncodingASCII));
+	CFStringRef ramdisk = CFStringCreateWithCString(kCFAllocatorDefault, temp.c_str(), kCFStringEncodingMacRoman);
+	ret = sendFileToDevice(sh->recovery_dev, ramdisk);
+	CFRelease(ramdisk);
 	ifVerbose cout << "sendFileToDevice: " << ret << endl;
 	if (ret != 0) {
 		ifNotQuiet cout << "Send ramdisk failed.  Aborting." << endl;
@@ -67,12 +90,18 @@ int recovery_grestore(string *args, struct shell_state *sh)
 		ifNotQuiet cout << "Load ramdisk failed.  Aborting." << endl;
 		return SHELL_CONTINUE;
 	}
-	
-	temp = args[1]+ "kernelcache.restore.release.s5l8900xrb";
+
+	// firmware 1.0
+	// temp = args[1] + "kernelcache.restore.release.s5l8900xrb";
+
+	// firmware 1.0.1, 1.0.2, 1.1.1
+	temp = args[1]+ "kernelcache.release.s5l8900xrb";
 	
 	// Send the kernelcache
 	ifVerbose cout << "Sending kernelcache '"<< temp << "'" << endl;
-	ret = sendFileToDevice(sh->recovery_dev, CFStringCreateWithCString(NULL, temp.c_str(), kCFStringEncodingASCII));
+	CFStringRef kerncache = CFStringCreateWithCString(kCFAllocatorDefault, temp.c_str(), kCFStringEncodingMacRoman);
+	ret = sendFileToDevice(sh->recovery_dev, kerncache);
+	CFRelease(kerncache);
 	ifVerbose cout << "sendFileToDevice: " << ret << endl;
 	if (ret != 0) {
 		ifNotQuiet cout << "Send kernelcache failed.  Aborting." << endl;
@@ -106,9 +135,9 @@ int recovery_grestore(string *args, struct shell_state *sh)
 
 int recovery_filecopytophone(string *args, struct shell_state *sh)
 {
-	mach_error_t retval = sendFileToDevice(	sh->recovery_dev,
-						CFStringCreateWithCString(NULL, args[1].c_str(), kCFStringEncodingASCII) );
-	
+	CFStringRef file = CFStringCreateWithCString(NULL, args[1].c_str(), kCFStringEncodingMacRoman);
+	mach_error_t retval = sendFileToDevice(	sh->recovery_dev, file );
+	CFRelease(file);
 	ifNotQuiet cout	<< "filecopytophone: " << retval << endl;
 	//cout << "filecopytophone: " << filecopytophone(sh->recovery_dev, cline.c_str(), 0x09000000) << " bytes copied" << endl;
 	
