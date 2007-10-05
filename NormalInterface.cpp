@@ -276,7 +276,7 @@ int n_readvalue(string *args, struct shell_state *sh)
 	}
 	
 	__CFString * result = AMDeviceCopyValue(sh->dev, 0, 
-						CFStringCreateWithCString(NULL, args[1].c_str(), kCFStringEncodingASCII));
+						(__CFString  *)CFStringCreateWithCString(NULL, args[1].c_str(), kCFStringEncodingASCII));
 	if (result)
 		//Windows handling code goes here!
 		CFShow(result);
