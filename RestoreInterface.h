@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2007  iPhoneDev Team ( http://iphone.fiveforty.net/wiki/ )
+  Copyright (C) 2007  iPhoneDev Team ( http://iphone.fiveforty.net/wiki/ )
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by

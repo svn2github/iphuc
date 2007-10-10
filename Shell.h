@@ -1,6 +1,6 @@
 /*
 
-Copyright (C) 2007  iPhoneDev Team ( http://iphone.fiveforty.net/wiki/ )
+  Copyright (C) 2007  iPhoneDev Team ( http://iphone.fiveforty.net/wiki/ )
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -31,8 +31,8 @@ Copyright (C) 2007  iPhoneDev Team ( http://iphone.fiveforty.net/wiki/ )
 
 extern "C"
 {
-#include <readline/history.h>
-#include <readline/readline.h>
+  #include <readline/history.h>
+  #include <readline/readline.h>
 }
 
 #include "MobileDevice.h"
@@ -50,27 +50,27 @@ extern "C"
 /* Defines for testing command line arguments passed to iphuc */
 // max number of command line options is limited to sizeof(short int)
 // which is always 2 bytes (16 bits)
-#define OPT_QUIET	1	//q quiet
-#define OPT_VERBOSE	2	//v verbose
-#define OPT_SCRIPT	4	//s script
-#define OPT_ONESHOT	8	//o oneshot
-#define OPT_AFCNAME	16	//a afcname
-#define OPT_DEBUG	32	//d debug
-#define OPT_RECOVERY	64	//r wait for recovery mode
-#define OPT_NORMAL	128	//n wait for normal mode
-#define OPT_RESTORE	256	//e wait for restore mode (probably shouldn't use)
+#define OPT_QUIET       1       //q quiet
+#define OPT_VERBOSE     2       //v verbose
+#define OPT_SCRIPT      4       //s script
+#define OPT_ONESHOT     8       //o oneshot
+#define OPT_AFCNAME     16      //a afcname
+#define OPT_DEBUG       32      //d debug
+#define OPT_RECOVERY    64      //r wait for recovery mode
+#define OPT_NORMAL      128     //n wait for normal mode
+#define OPT_RESTORE     256     //e wait for restore mode (probably shouldn't use)
 
-#define ifNotQuiet		if( !(getcliflags() & OPT_QUIET) )
-#define ifVerbose		if( getcliflags() & OPT_VERBOSE )
+#define ifNotQuiet              if( !(getcliflags() & OPT_QUIET) )
+#define ifVerbose               if( getcliflags() & OPT_VERBOSE )
 
 #ifdef DEBUG
-#define D(string)		if( getcliflags() & OPT_DEBUG ) cout << "debug: " << string << endl
+#define D(string)               if( getcliflags() & OPT_DEBUG ) cout << "debug: " << string << endl
 #else 
-#define D(string)		
+#define D(string)               
 #endif
 
 /* Unix version of a hidden file.  Could be different on other systems. */
-#define HIDDEN_FILE(fname)	((fname)[0] == '.')
+#define HIDDEN_FILE(fname)      ((fname)[0] == '.')
 
 // TODO:  Add windows version of this?
 #define PATH_DELIMITER_CHAR '/'
@@ -81,51 +81,51 @@ extern "C"
 #endif
 
 /* Shell defines */
-#define SHELL_UNKNOWN	-1
-#define SHELL_NORMAL	0
-#define	SHELL_RESTORE	1
-#define SHELL_RECOVERY	2
-#define SHELL_DFU		3
+#define SHELL_UNKNOWN   -1
+#define SHELL_NORMAL    0
+#define SHELL_RESTORE   1
+#define SHELL_RECOVERY  2
+#define SHELL_DFU               3
 
-#define MAX_ARGUMENTS	5
+#define MAX_ARGUMENTS   5
 
 // userspace function exit values
-#define SHELL_CONTINUE	-1	// continue reading from interactive shell
-#define	SHELL_TERMINATE	0	// terminate application 
-#define SHELL_WAIT	1	// wait for device reconnect
+#define SHELL_CONTINUE  -1      // continue reading from interactive shell
+#define SHELL_TERMINATE 0       // terminate application 
+#define SHELL_WAIT      1       // wait for device reconnect
 
 typedef int shell_funct (string*, shell_state*);
 
 typedef struct {
-	char *name;		// User printable name
-	shell_funct *func;	// Function pointer
-	char *doc;		// Documentation string
+  char *name;             // User printable name
+  shell_funct *func;      // Function pointer
+  char *doc;              // Documentation string
 } COMMAND;
 
 // readline
 typedef struct shell_state {
-	struct afc_connection *afch;
-	struct afc_connection *conn;
-	struct afc_connection *alt_service;
-	struct am_restore_device *restore_dev;
-	struct am_recovery_device *recovery_dev;
-	struct am_device *dev;
-	
-	int shell_mode;
-	
-	string prompt_string;
-	string remote_path;
-	string local_path;
-	
-	COMMAND *command_array;
+  struct afc_connection *afch;
+  struct afc_connection *conn;
+  struct afc_connection *alt_service;
+  struct am_restore_device *restore_dev;
+  struct am_recovery_device *recovery_dev;
+  struct am_device *dev;
+        
+  int shell_mode;
+        
+  string prompt_string;
+  string remote_path;
+  string local_path;
+        
+  COMMAND *command_array;
 };
 
 struct afc_dirent {
-	uint8_t d_namlen;
-	char *d_name;
+  uint8_t d_namlen;
+  char *d_name;
 };
 
-#define D_NAMLEN(d)	((d).d_namlen)
+#define D_NAMLEN(d)     ((d).d_namlen)
 
 typedef int shell_funct (string*, shell_state*);
 typedef char *rl_compentry_func_t (const char *, int);
