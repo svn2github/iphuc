@@ -42,8 +42,6 @@ extern "C"
 #include "RestoreInterface.h"
 #include "privateFunctions.h"
 
-#include "config.h"
-
 //REMOVE
 #define DEBUG 1
 

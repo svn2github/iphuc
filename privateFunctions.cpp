@@ -180,6 +180,7 @@ void *base64toCFData(char *in)
 {
   //     string dec=base64_decode(in);
   //   return (void *)CFDataCreate(NULL,(UInt8 *)dec.c_str(),dec.length());
+  return false;
 }
 
 void GhettoCFStringPrint(CFStringRef str)

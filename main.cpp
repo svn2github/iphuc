@@ -396,14 +396,6 @@ int main(int argc, char **argv)
       D("Set default afc name.");
     }
         
-  ifNotQuiet cout << PACKAGE_STRING;
-#ifdef HAVE_READLINE_COMPLETION
-  ifNotQuiet cout << " with tab completion."<< endl;
-#else
-  ifNotQuiet cout << endl;
-#endif
-        
-  ifNotQuiet cout << ">> By The iPhoneDev Team: " << AUTHOR_NICK_STRING << endl;
   D("debug mode on.");
         
   //Call to SERIOUS_HACKERY

@@ -1,0 +1,296 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 42;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		252A16420CBC5777009F0687 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 252A16410CBC5777009F0687 /* main.cpp */; };
+		252A164F0CBC5794009F0687 /* DFUInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 252A16430CBC5794009F0687 /* DFUInterface.cpp */; };
+		252A16500CBC5794009F0687 /* DFUInterface.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 252A16440CBC5794009F0687 /* DFUInterface.h */; };
+		252A16510CBC5794009F0687 /* NormalInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 252A16450CBC5794009F0687 /* NormalInterface.cpp */; };
+		252A16520CBC5794009F0687 /* NormalInterface.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 252A16460CBC5794009F0687 /* NormalInterface.h */; };
+		252A16530CBC5794009F0687 /* privateFunctions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 252A16470CBC5794009F0687 /* privateFunctions.cpp */; };
+		252A16540CBC5794009F0687 /* privateFunctions.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 252A16480CBC5794009F0687 /* privateFunctions.h */; };
+		252A16550CBC5794009F0687 /* RecoveryInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 252A16490CBC5794009F0687 /* RecoveryInterface.cpp */; };
+		252A16560CBC5794009F0687 /* RecoveryInterface.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 252A164A0CBC5794009F0687 /* RecoveryInterface.h */; };
+		252A16570CBC5794009F0687 /* RestoreInterface.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 252A164B0CBC5794009F0687 /* RestoreInterface.cpp */; };
+		252A16580CBC5794009F0687 /* RestoreInterface.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 252A164C0CBC5794009F0687 /* RestoreInterface.h */; };
+		252A16590CBC5794009F0687 /* Shell.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 252A164D0CBC5794009F0687 /* Shell.cpp */; };
+		252A165A0CBC5794009F0687 /* Shell.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 252A164E0CBC5794009F0687 /* Shell.h */; };
+		252A16600CBC57C0009F0687 /* AUTHORS in CopyFiles */ = {isa = PBXBuildFile; fileRef = 252A165C0CBC57C0009F0687 /* AUTHORS */; };
+		252A16610CBC57C0009F0687 /* ChangeLog in CopyFiles */ = {isa = PBXBuildFile; fileRef = 252A165D0CBC57C0009F0687 /* ChangeLog */; };
+		252A16620CBC57C0009F0687 /* NEWS in CopyFiles */ = {isa = PBXBuildFile; fileRef = 252A165E0CBC57C0009F0687 /* NEWS */; };
+		252A16630CBC57C0009F0687 /* README in CopyFiles */ = {isa = PBXBuildFile; fileRef = 252A165F0CBC57C0009F0687 /* README */; };
+		252A16650CBC57D6009F0687 /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 252A16640CBC57D6009F0687 /* CoreFoundation.framework */; };
+		252A16690CBC57F4009F0687 /* MobileDevice.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 252A16680CBC57F4009F0687 /* MobileDevice.framework */; };
+		252A16720CBC581E009F0687 /* MobileDevice.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 252A16710CBC581E009F0687 /* MobileDevice.h */; };
+		8DD76F6A0486A84900D96B5E /* iPHUC.1 in CopyFiles */ = {isa = PBXBuildFile; fileRef = C6859E8B029090EE04C91782 /* iPHUC.1 */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		8DD76F690486A84900D96B5E /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 8;
+			dstPath = /usr/share/man/man1/;
+			dstSubfolderSpec = 0;
+			files = (
+				8DD76F6A0486A84900D96B5E /* iPHUC.1 in CopyFiles */,
+				252A16500CBC5794009F0687 /* DFUInterface.h in CopyFiles */,
+				252A16520CBC5794009F0687 /* NormalInterface.h in CopyFiles */,
+				252A16540CBC5794009F0687 /* privateFunctions.h in CopyFiles */,
+				252A16560CBC5794009F0687 /* RecoveryInterface.h in CopyFiles */,
+				252A16580CBC5794009F0687 /* RestoreInterface.h in CopyFiles */,
+				252A165A0CBC5794009F0687 /* Shell.h in CopyFiles */,
+				252A16600CBC57C0009F0687 /* AUTHORS in CopyFiles */,
+				252A16610CBC57C0009F0687 /* ChangeLog in CopyFiles */,
+				252A16620CBC57C0009F0687 /* NEWS in CopyFiles */,
+				252A16630CBC57C0009F0687 /* README in CopyFiles */,
+				252A16720CBC581E009F0687 /* MobileDevice.h in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 1;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		252A16410CBC5777009F0687 /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		252A16430CBC5794009F0687 /* DFUInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = DFUInterface.cpp; sourceTree = "<group>"; };
+		252A16440CBC5794009F0687 /* DFUInterface.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = DFUInterface.h; sourceTree = "<group>"; };
+		252A16450CBC5794009F0687 /* NormalInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = NormalInterface.cpp; sourceTree = "<group>"; };
+		252A16460CBC5794009F0687 /* NormalInterface.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = NormalInterface.h; sourceTree = "<group>"; };
+		252A16470CBC5794009F0687 /* privateFunctions.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = privateFunctions.cpp; sourceTree = "<group>"; };
+		252A16480CBC5794009F0687 /* privateFunctions.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = privateFunctions.h; sourceTree = "<group>"; };
+		252A16490CBC5794009F0687 /* RecoveryInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RecoveryInterface.cpp; sourceTree = "<group>"; };
+		252A164A0CBC5794009F0687 /* RecoveryInterface.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RecoveryInterface.h; sourceTree = "<group>"; };
+		252A164B0CBC5794009F0687 /* RestoreInterface.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = RestoreInterface.cpp; sourceTree = "<group>"; };
+		252A164C0CBC5794009F0687 /* RestoreInterface.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = RestoreInterface.h; sourceTree = "<group>"; };
+		252A164D0CBC5794009F0687 /* Shell.cpp */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.cpp.cpp; path = Shell.cpp; sourceTree = "<group>"; };
+		252A164E0CBC5794009F0687 /* Shell.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = Shell.h; sourceTree = "<group>"; };
+		252A165C0CBC57C0009F0687 /* AUTHORS */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = AUTHORS; sourceTree = "<group>"; };
+		252A165D0CBC57C0009F0687 /* ChangeLog */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = ChangeLog; sourceTree = "<group>"; };
+		252A165E0CBC57C0009F0687 /* NEWS */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = NEWS; sourceTree = "<group>"; };
+		252A165F0CBC57C0009F0687 /* README */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = text; path = README; sourceTree = "<group>"; };
+		252A16640CBC57D6009F0687 /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = /System/Library/Frameworks/CoreFoundation.framework; sourceTree = "<absolute>"; };
+		252A16680CBC57F4009F0687 /* MobileDevice.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MobileDevice.framework; path = /System/Library/PrivateFrameworks/MobileDevice.framework; sourceTree = "<absolute>"; };
+		252A16710CBC581E009F0687 /* MobileDevice.h */ = {isa = PBXFileReference; fileEncoding = 30; lastKnownFileType = sourcecode.c.h; path = MobileDevice.h; sourceTree = "<group>"; };
+		8DD76F6C0486A84900D96B5E /* iPHUC */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = iPHUC; sourceTree = BUILT_PRODUCTS_DIR; };
+		C6859E8B029090EE04C91782 /* iPHUC.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = iPHUC.1; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8DD76F660486A84900D96B5E /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				252A16650CBC57D6009F0687 /* CoreFoundation.framework in Frameworks */,
+				252A16690CBC57F4009F0687 /* MobileDevice.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		08FB7794FE84155DC02AAC07 /* iPHUC */ = {
+			isa = PBXGroup;
+			children = (
+				08FB7795FE84155DC02AAC07 /* Source */,
+				252A165B0CBC579B009F0687 /* External Frameworks */,
+				C6859E8C029090F304C91782 /* Documentation */,
+				1AB674ADFE9D54B511CA2CBB /* Products */,
+			);
+			name = iPHUC;
+			sourceTree = "<group>";
+		};
+		08FB7795FE84155DC02AAC07 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				252A16710CBC581E009F0687 /* MobileDevice.h */,
+				252A16430CBC5794009F0687 /* DFUInterface.cpp */,
+				252A16440CBC5794009F0687 /* DFUInterface.h */,
+				252A16450CBC5794009F0687 /* NormalInterface.cpp */,
+				252A16460CBC5794009F0687 /* NormalInterface.h */,
+				252A16470CBC5794009F0687 /* privateFunctions.cpp */,
+				252A16480CBC5794009F0687 /* privateFunctions.h */,
+				252A16490CBC5794009F0687 /* RecoveryInterface.cpp */,
+				252A164A0CBC5794009F0687 /* RecoveryInterface.h */,
+				252A164B0CBC5794009F0687 /* RestoreInterface.cpp */,
+				252A164C0CBC5794009F0687 /* RestoreInterface.h */,
+				252A164D0CBC5794009F0687 /* Shell.cpp */,
+				252A164E0CBC5794009F0687 /* Shell.h */,
+				252A16410CBC5777009F0687 /* main.cpp */,
+			);
+			name = Source;
+			sourceTree = "<group>";
+		};
+		1AB674ADFE9D54B511CA2CBB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8DD76F6C0486A84900D96B5E /* iPHUC */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		252A165B0CBC579B009F0687 /* External Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				252A16680CBC57F4009F0687 /* MobileDevice.framework */,
+				252A16640CBC57D6009F0687 /* CoreFoundation.framework */,
+			);
+			name = "External Frameworks";
+			sourceTree = "<group>";
+		};
+		C6859E8C029090F304C91782 /* Documentation */ = {
+			isa = PBXGroup;
+			children = (
+				252A165C0CBC57C0009F0687 /* AUTHORS */,
+				252A165D0CBC57C0009F0687 /* ChangeLog */,
+				252A165E0CBC57C0009F0687 /* NEWS */,
+				252A165F0CBC57C0009F0687 /* README */,
+				C6859E8B029090EE04C91782 /* iPHUC.1 */,
+			);
+			name = Documentation;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		8DD76F620486A84900D96B5E /* iPHUC */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1DEB923108733DC60010E9CD /* Build configuration list for PBXNativeTarget "iPHUC" */;
+			buildPhases = (
+				8DD76F640486A84900D96B5E /* Sources */,
+				8DD76F660486A84900D96B5E /* Frameworks */,
+				8DD76F690486A84900D96B5E /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = iPHUC;
+			productInstallPath = "$(HOME)/bin";
+			productName = iPHUC;
+			productReference = 8DD76F6C0486A84900D96B5E /* iPHUC */;
+			productType = "com.apple.product-type.tool";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		08FB7793FE84155DC02AAC07 /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = 1DEB923508733DC60010E9CD /* Build configuration list for PBXProject "iPHUC" */;
+			hasScannedForEncodings = 1;
+			mainGroup = 08FB7794FE84155DC02AAC07 /* iPHUC */;
+			projectDirPath = "";
+			targets = (
+				8DD76F620486A84900D96B5E /* iPHUC */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8DD76F640486A84900D96B5E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				252A16420CBC5777009F0687 /* main.cpp in Sources */,
+				252A164F0CBC5794009F0687 /* DFUInterface.cpp in Sources */,
+				252A16510CBC5794009F0687 /* NormalInterface.cpp in Sources */,
+				252A16530CBC5794009F0687 /* privateFunctions.cpp in Sources */,
+				252A16550CBC5794009F0687 /* RecoveryInterface.cpp in Sources */,
+				252A16570CBC5794009F0687 /* RestoreInterface.cpp in Sources */,
+				252A16590CBC5794009F0687 /* Shell.cpp in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		1DEB923208733DC60010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
+				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"";
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				INSTALL_PATH = "$(HOME)/bin";
+				OTHER_LDFLAGS = "-lreadline";
+				PRODUCT_NAME = iPHUC;
+				ZERO_LINK = YES;
+			};
+			name = Debug;
+		};
+		1DEB923308733DC60010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ARCHS = (
+					ppc,
+					i386,
+				);
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(FRAMEWORK_SEARCH_PATHS_QUOTED_1)",
+				);
+				FRAMEWORK_SEARCH_PATHS_QUOTED_1 = "\"$(SYSTEM_LIBRARY_DIR)/PrivateFrameworks\"";
+				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
+				GCC_MODEL_TUNING = G5;
+				INSTALL_PATH = "$(HOME)/bin";
+				OTHER_LDFLAGS = "-lreadline";
+				PRODUCT_NAME = iPHUC;
+			};
+			name = Release;
+		};
+		1DEB923608733DC60010E9CD /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = /System/Library/PrivateFrameworks/;
+				GCC_WARN_ABOUT_RETURN_TYPE = NO;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				PREBINDING = NO;
+				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = YES;
+			};
+			name = Debug;
+		};
+		1DEB923708733DC60010E9CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				FRAMEWORK_SEARCH_PATHS = /System/Library/PrivateFrameworks/;
+				GCC_WARN_ABOUT_RETURN_TYPE = NO;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				PREBINDING = NO;
+				SCAN_ALL_SOURCE_FILES_FOR_INCLUDES = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1DEB923108733DC60010E9CD /* Build configuration list for PBXNativeTarget "iPHUC" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB923208733DC60010E9CD /* Debug */,
+				1DEB923308733DC60010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		1DEB923508733DC60010E9CD /* Build configuration list for PBXProject "iPHUC" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				1DEB923608733DC60010E9CD /* Debug */,
+				1DEB923708733DC60010E9CD /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 08FB7793FE84155DC02AAC07 /* Project object */;
+}
