@@ -25,10 +25,12 @@ int dfu_restore(string *args, struct shell_state *sh)
 												  kCFStringEncodingMacRoman);
 	CFDictionarySetValue(opts, CFSTR("RestoreBundlePath"), value );
 
-	//    describe255(opts);
+#if 0
+        // we don't have AMRestorePerformDFURestore at the moment. FIXME
+	describe255(opts);
 	ret = AMRestorePerformDFURestore( sh->recovery_dev, opts,
-									  (void*)dfu_progress_callback, NULL );
-
+                                          (void*)dfu_progress_callback, NULL );
+#endif
 	CFRelease(value);
 	ifVerbose cout 	<< "AMRestorePerformDFURestore: " << ret << endl;
 
