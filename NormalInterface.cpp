@@ -658,8 +658,7 @@ unsigned int get_file_size(struct afc_connection *conn, char *path)
     if (!strcmp(key, "st_size")) {
       sscanf(val, "%u", &size);
       AFCKeyValueClose(info);
-	  size = 31457280;
-	  return size;
+      return size;
     }
   }
         
