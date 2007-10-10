@@ -1,7 +1,7 @@
 // !$*UTF8*$!
 {
 	08FB7793FE84155DC02AAC07 /* Project object */ = {
-		activeBuildConfigurationName = Release;
+		activeBuildConfigurationName = Debug;
 		activeExecutable = 252A162C0CBC5706009F0687 /* iPHUC */;
 		activeTarget = 8DD76F620486A84900D96B5E /* iPHUC */;
 		addToTargets = (
@@ -33,7 +33,7 @@
 				PBXFileTableDataSourceColumnWidthsKey = (
 					22,
 					300,
-					131,
+					130,
 				);
 				PBXFileTableDataSourceColumnsKey = (
 					PBXExecutablesDataSource_ActiveFlagID,
@@ -99,7 +99,7 @@
 					20,
 					219,
 					20,
-					48.1626,
+					48,
 					43,
 					43,
 					20,
@@ -137,8 +137,8 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 213670581;
-			PBXWorkspaceStateSaveDate = 213670581;
+			PBXPerProjectTemplateStateSaveDate = 213672843;
+			PBXWorkspaceStateSaveDate = 213672843;
 		};
 		sourceControlManager = 252A16330CBC570B009F0687 /* Source Control */;
 		userBuildSettings = {
@@ -189,6 +189,14 @@
 			sepNavWindowFrame = "{{437, 306}, {750, 558}}";
 		};
 	};
+	252A16450CBC5794009F0687 /* NormalInterface.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {806, 10318}}";
+			sepNavSelRange = "{17585, 0}";
+			sepNavVisRect = "{{0, 8941}, {711, 429}}";
+			sepNavWindowFrame = "{{15, 439}, {750, 558}}";
+		};
+	};
 	252A16470CBC5794009F0687 /* privateFunctions.cpp */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {890, 3780}}";
@@ -204,12 +212,28 @@
 			sepNavVisRect = "{{0, 615}, {779, 185}}";
 		};
 	};
+	252A164D0CBC5794009F0687 /* Shell.cpp */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {806, 9044}}";
+			sepNavSelRange = "{13417, 8}";
+			sepNavVisRect = "{{0, 6961}, {711, 429}}";
+			sepNavWindowFrame = "{{61, 397}, {750, 558}}";
+		};
+	};
 	252A164E0CBC5794009F0687 /* Shell.h */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {614, 2310}}";
 			sepNavSelRange = "{1164, 9}";
 			sepNavVisRect = "{{0, 530}, {459, 186}}";
 			sepNavWindowFrame = "{{353, 221}, {750, 558}}";
+		};
+	};
+	252A16710CBC581E009F0687 /* MobileDevice.h */ = {
+		uiCtxt = {
+			sepNavIntBoundsRect = "{{0, 0}, {842, 7140}}";
+			sepNavSelRange = "{5818, 14}";
+			sepNavVisRect = "{{0, 1921}, {711, 429}}";
+			sepNavWindowFrame = "{{380, 403}, {750, 558}}";
 		};
 	};
 	252A16940CBC58B0009F0687 /* XCBreakpointsBucket */ = {

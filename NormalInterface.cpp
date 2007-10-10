@@ -510,8 +510,9 @@ int n_fileinfo(string *args, struct shell_state *sh)
     }
         
   AFCKeyValueRead(info, &key, &val);
-  while (key) {
-                
+  while (1) {
+    if (!key || !val)
+	
     if (val)
       cout << key << ": " << val << endl;
     else
@@ -651,13 +652,14 @@ unsigned int get_file_size(struct afc_connection *conn, char *path)
         
   while (1) {
     AFCKeyValueRead(info, &key, &val);
-    if (!key || !val)
-      break;
+
+	cout << key << " " << val << endl;
 
     if (!strcmp(key, "st_size")) {
       sscanf(val, "%u", &size);
       AFCKeyValueClose(info);
-      return size;
+	  size = 31457280;
+	  return size;
     }
   }
         
