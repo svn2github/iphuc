@@ -356,7 +356,8 @@ int n_getfilesize(string *args, struct shell_state *sh)
 int n_getfile(string *args, struct shell_state *sh)
 {
   string path;
-        
+  unsigned int file_size = 0;
+  
   // make sure we're only talkin one file here
   if( dirExists(sh->conn, (char *)args[1].c_str() ) )
     {
@@ -416,10 +417,23 @@ int n_getfile(string *args, struct shell_state *sh)
                 
       closedir(tempdir);
     }
-        
+
+  // optional arg[3] is the number of bytes to download 
+  if(args[3] != "") {
+	  file_size = strtol(args[3].c_str(), NULL, 10);
+	  if(file_size == 0) {
+		  ifNotQuiet cout << "getfile:  Invalid file size specified."
+		  << endl;
+		  
+		  return SHELL_CONTINUE;
+	  }
+	  ifNotQuiet cout << "getfile: using specified filesize of " <<
+		  file_size << endl;
+  }
+    
   D("getting remote file: "<< args[1]);
   D("putting at local path: "<< args[2]);
-  get_file(sh, (char *)args[2].c_str(), (char *)args[1].c_str());
+  get_file(sh, (char *)args[2].c_str(), (char *)args[1].c_str(), file_size);
         
   return SHELL_CONTINUE;
 }
@@ -668,11 +682,10 @@ unsigned int get_file_size(struct afc_connection *conn, char *path)
   return 0;
 }
 
-void get_file(struct shell_state *sh, char *local_path, char *remote_path)
+void get_file(struct shell_state *sh, char *local_path, char *remote_path, unsigned int remote_file_size)
 {
   FILE *f;
   unsigned char *buf;
-  unsigned int remote_file_size;
   afc_file_ref ref;
   afc_error_t ret;
         
@@ -686,9 +699,11 @@ void get_file(struct shell_state *sh, char *local_path, char *remote_path)
       ifNotQuiet cout << "getfile: Failed to open remote file: " << ret << endl;
       return;
     }
-        
-  remote_file_size = get_file_size(sh->conn, remote_path); 
 
+  if(remote_file_size == 0) {
+	  remote_file_size = get_file_size(sh->conn, remote_path); 
+  }
+  
   ifVerbose cout  << "AFCFileRefRead: reading " << remote_file_size
                   << " bytes into buffer" << endl;
         

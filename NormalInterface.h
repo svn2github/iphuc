@@ -36,7 +36,7 @@
 using namespace std;
 
 void put_file(struct shell_state *sh, char *local_path, char *remote_path);
-void get_file(struct shell_state *sh, char *local_path, char *remote_path);
+void get_file(struct shell_state *sh, char *local_path, char *remote_path, unsigned int remote_file_size);
 unsigned int get_file_size(struct afc_connection *conn, char *path);
 void set_afc_service_name(string *name);
 const char *get_afc_service_name();
