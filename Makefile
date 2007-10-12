@@ -1,2 +1,2 @@
 all: 
-	xcodebuild iPHUC.xcodeproj
+	xcodebuild -parallelizeTargets -target iPHUC -project ./iPHUC.xcodeproj
