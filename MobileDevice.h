@@ -320,6 +320,7 @@ afc_error_t AFCDirectoryRead(struct afc_connection *conn/*unsigned int unused*/,
 afc_error_t AFCDirectoryClose(afc_connection *conn, struct afc_directory *dir);
 afc_error_t AFCDirectoryCreate(afc_connection *conn, char *dirname);
 afc_error_t AFCRemovePath(afc_connection *conn, char *dirname);
+afc_error_t AFCRenamePath(afc_connection *conn, char *oldpath, char *newpath);
 
 /* Returns the context field of the given AFC connection. */
 unsigned int AFCConnectionGetContext(struct afc_connection *conn);

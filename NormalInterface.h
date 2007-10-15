@@ -47,6 +47,7 @@ int n_lcd(string *args, struct shell_state *sh);
 int n_ls(string *args, struct shell_state *sh);
 int n_mkdir(string *args, struct shell_state *sh);
 int n_rmdir(string *args, struct shell_state *sh);
+int n_rename(string *args, struct shell_state *sh);
 int n_activate(string *args, struct shell_state *sh);
 int n_deactivate(string *args, struct shell_state *sh);
 int n_deviceinfo(string *args, struct shell_state *sh);

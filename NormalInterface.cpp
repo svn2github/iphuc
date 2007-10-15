@@ -229,6 +229,58 @@ int n_rmdir(string *args, struct shell_state *sh)
   return SHELL_CONTINUE;
 }
 
+int n_rename(string *args, struct shell_state *sh)
+{
+	afc_error_t retval;
+	string oldpath, newpath;
+
+	if( args[1] == "" )
+    {
+		ifNotQuiet cout << "rename: please specify a path to rename" << endl;
+		return SHELL_CONTINUE;
+    } else if ( args[1].at(0) == '/' ) {
+        
+		// assume an abs path
+		oldpath = args[1];
+	} else {
+
+		// assume it's relative to remote_path
+		oldpath = sh->remote_path;
+		processRelativePath(&oldpath, &args[1]);
+	}
+
+	if( args[2] == "" )
+    {
+		ifNotQuiet cout << "rename: please specify a new path name" << endl;
+		return SHELL_CONTINUE;
+    } else if ( args[2].at(0) == '/' ) {
+        
+		// assume an abs path
+		newpath = args[2];
+	} else {
+		
+		// assume it's relative to remote_path
+		newpath = sh->remote_path;
+		processRelativePath(&newpath, &args[2]);
+	}
+	
+	D("renaming remote path "<< oldpath << " to " << newpath);
+
+	retval = AFCRenamePath(sh->conn, (char *)oldpath.c_str(), (char *)newpath.c_str() );
+	switch(retval)
+    {
+		case 0:
+			ifNotQuiet cout << "rename: Successfully renamed path." << endl;
+			break;
+		case 1:
+			ifNotQuiet cout << "rename: Could not rename path." << endl;
+		default:
+			ifNotQuiet cout << "rename: AFCRenamePath returned unknown error code: " << retval << endl;
+    }
+	
+	return SHELL_CONTINUE;
+}
+
 int n_activate(string *args, struct shell_state *sh)
 {
   cout << "Implement me!" << endl;

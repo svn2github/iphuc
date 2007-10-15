@@ -21,6 +21,7 @@ COMMAND normal_shell[] =
     { "ls",            n_ls,            ">> ls [path] - List directory at current working path or [path]" },
     { "mkdir",         n_mkdir,         ">> mkdir <path> - Create directory at <path>" },           
     { "rmdir",         n_rmdir,         ">> rmdir <path> - Remove directory at <path>" },
+	{ "rename",		   n_rename,		">> rename <oldpath> <newpath> - Rename a file/directory" },
     { "activate",      n_activate,      ">> activate <path> - Activate iPhone with .plist file at <path>" },
     { "deactivate",    n_deactivate,    ">> deactivate - Deactivate iPhone" },
     { "readvalue",     n_readvalue,     ">> readvalue <value> - Read <value>.  No args lists knownn values." },
